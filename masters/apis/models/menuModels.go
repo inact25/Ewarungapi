@@ -6,8 +6,3 @@ type MenuModels struct {
 	MenuPrice string `json:"menu_price"`
 	MenuStock string `json:"menu_stock"`
 }
-type MenuPriceModels struct {
-	PriceID   string `json:"price_id"`
-	PriceDate string `json:"price_date"`
-	Price     string `json:"price"`
-}

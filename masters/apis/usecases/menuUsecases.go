@@ -7,6 +7,4 @@ type MenuUseCases interface {
 	UpdateMenu(menus *models.MenuModels) (string, error)
 	DeleteMenu(menusID string) (string, error)
 	AddNewMenu(menus *models.MenuModels) (string, error)
-	GetAllMenuPrices() ([]*models.MenuPriceModels, error)
-	AddNewMenuPrices(day string, menus *models.MenuPriceModels) (string, error)
 }
