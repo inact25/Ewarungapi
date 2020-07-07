@@ -1,0 +1,8 @@
+//change this file extension to .env
+DbEngine = 'mysql'
+DbUser = 'root'
+DbPass = 'yourPass'
+DbHost = 'localhost'
+DbPort = '8080'
+DbConnection = '@tcp'
+DbSchema = 'yourSchema'
