@@ -63,6 +63,7 @@ func (s MenuRepoImpl) AddNewMenu(menus *models.MenuModels) (string, error) {
 	defer stmt.Close()
 	if _, err := stmt.Exec(menus.MenuID, menus.MenuDesc, menus.MenuStock); err != nil {
 		tx.Rollback()
+		log.Fatal(err)
 		return "", err
 	}
 	return "", tx.Commit()
@@ -70,16 +71,18 @@ func (s MenuRepoImpl) AddNewMenu(menus *models.MenuModels) (string, error) {
 
 func (s MenuRepoImpl) GetAllMenu() ([]*models.MenuModels, error) {
 	dataMenus := []*models.MenuModels{}
-	query := "select m.menuID, m.menuDesc, max(p.price) as price, m.menuStock from menu m left join price p on m.menuID = p.priceID group by menuID;"
+	query := "select m.menuID, m.menuDesc, ifNull(max(p.price),'Empty') as price, m.menuStock from menu m left join price p on m.menuID = p.priceID group by menuID;"
 	data, err := s.db.Query(query)
 	log.Println("R : ", data)
 	if err != nil {
+		log.Fatal(err)
 		return nil, err
 	}
 	for data.Next() {
 		menu := models.MenuModels{}
-		err := data.Scan(&menu.MenuID, &menu.MenuDesc, &menu.MenuDesc, &menu.MenuPrice, &menu.MenuStock)
+		err := data.Scan(&menu.MenuID, &menu.MenuDesc, &menu.MenuPrice, &menu.MenuStock)
 		if err != nil {
+			log.Fatal(err)
 			return nil, err
 
 		}
@@ -87,6 +90,48 @@ func (s MenuRepoImpl) GetAllMenu() ([]*models.MenuModels, error) {
 		log.Println("R : ", dataMenus)
 	}
 	return dataMenus, nil
+}
+
+func (s MenuRepoImpl) GetAllMenuPrice() ([]*models.MenuPriceModels, error) {
+	dataMenus := []*models.MenuPriceModels{}
+	query := "select * from price"
+	data, err := s.db.Query(query)
+	log.Println("R : ", data)
+	if err != nil {
+		log.Fatal(err)
+		return nil, err
+	}
+	for data.Next() {
+		menu := models.MenuPriceModels{}
+		err := data.Scan(&menu.PriceID, &menu.PriceDate, &menu.Price)
+		if err != nil {
+			log.Fatal(err)
+			return nil, err
+
+		}
+		dataMenus = append(dataMenus, &menu)
+		log.Println("R : ", dataMenus)
+	}
+	return dataMenus, nil
+}
+
+func (s MenuRepoImpl) AddNewMenuPrice(day string, menus *models.MenuPriceModels) (string, error) {
+	tx, err := s.db.Begin()
+	if err != nil {
+		return "", err
+	}
+	stmt, err := s.db.Prepare("insert into menuprices values (?,?,?)")
+	if err != nil {
+		tx.Rollback()
+		return "", err
+	}
+	defer stmt.Close()
+	if _, err := stmt.Exec(menus.PriceID, day, menus.Price); err != nil {
+		tx.Rollback()
+		log.Fatal(err)
+		return "", err
+	}
+	return "", tx.Commit()
 }
 
 func InitMenuRepoImpl(db *sql.DB) MenuRepositories {
