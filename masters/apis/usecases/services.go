@@ -36,6 +36,32 @@ func (s ServiceUseCaseImpl) AddNewServices(day string, services *models.Services
 	return category, nil
 }
 
+func (s ServiceUseCaseImpl) UpdateServices(services *models.ServicesModels) (string, error) {
+	log.Println("U :", services)
+	service, err := s.serviceRepo.UpdateServices(services)
+	if err != nil {
+		return "", err
+	}
+	return service, nil
+}
+
+func (s ServiceUseCaseImpl) UpdateServicesPrice(day string, services *models.ServicesModels) (string, error) {
+	log.Println("U :", services)
+	product, err := s.serviceRepo.UpdateServicesPrice(day, services)
+	if err != nil {
+		return "", err
+	}
+	return product, nil
+}
+
+func (s ServiceUseCaseImpl) DeleteServices(servicesID string) (string, error) {
+	product, err := s.serviceRepo.DeleteServices(servicesID)
+	if err != nil {
+		return "", err
+	}
+	return product, nil
+}
+
 func InitServiceUseCase(serviceRepo repositories.ServiceRepositories) ServiceUseCases {
 	return &ServiceUseCaseImpl{serviceRepo}
 }

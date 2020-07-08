@@ -15,7 +15,7 @@ menus/i 	=> Inactive
 
 #PUT EXAMPLE :
 
-==> Menu
+==> Menu : /
 {
     "menu_id": "M001",
     "menu_desc": "Ayam Crispy",
@@ -23,7 +23,7 @@ menus/i 	=> Inactive
     "menu_status": "A"
 }
 
-==> Price
+==> Price : /prices
 {
      "menu_id": "M001",
      "menu_price": "17500"
@@ -45,5 +45,21 @@ services/i	=> Inactive
      "price_date": "5000",
      "services_status": "A"        
 }
+
+#PUT EXAMPLE :
+
+==> Services : /
+{
+    "services_id": "S001",
+    "services_desc": "Wifi Pertalite",
+    "services_status": "A"
+}
+
+==> Services Price : /services
+{
+     "services_id": "S002",
+     "services_price": "1500"
+}
+
 
 

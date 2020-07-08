@@ -86,6 +86,66 @@ func (s ServicesRepoImpl) AddNewServices(day string, services *models.ServicesMo
 	return "", tx.Commit()
 }
 
+func (s ServicesRepoImpl) UpdateServices(services *models.ServicesModels) (string, error) {
+	log.Println("R :", services)
+	tx, err := s.db.Begin()
+	if err != nil {
+		log.Fatal(err)
+		return "", err
+	}
+	putServices, err := s.db.Prepare(UpdateServicesQuery)
+	if err != nil {
+		tx.Rollback()
+		return "", err
+	}
+	defer putServices.Close()
+	if _, err := putServices.Exec(services.ServicesDesc, services.ServicesStatus, services.ServicesID); err != nil {
+		tx.Rollback()
+		return "", err
+	}
+	return "", tx.Commit()
+}
+
+func (s ServicesRepoImpl) UpdateServicesPrice(day string, services *models.ServicesModels) (string, error) {
+	log.Println("R :", services)
+	tx, err := s.db.Begin()
+	if err != nil {
+		log.Fatal(err)
+		return "", err
+	}
+	putServices, err := s.db.Prepare(UpdateServicesPriceQuery)
+	if err != nil {
+		tx.Rollback()
+		return "", err
+	}
+	defer putServices.Close()
+	if _, err := putServices.Exec(services.ServicesID, day, services.ServicePrice); err != nil {
+		tx.Rollback()
+		return "", err
+	}
+	return "", tx.Commit()
+
+}
+
+func (s ServicesRepoImpl) DeleteServices(servicesID string) (string, error) {
+	tx, err := s.db.Begin()
+	if err != nil {
+		log.Fatal(err)
+		return "", err
+	}
+	stmt, err := s.db.Prepare(DeleteServicesQuery)
+	if err != nil {
+		tx.Rollback()
+		return "", err
+	}
+	defer stmt.Close()
+	if _, err := stmt.Exec(servicesID); err != nil {
+		tx.Rollback()
+		return "", err
+	}
+	return "", tx.Commit()
+}
+
 func InitServiceRepoImpl(db *sql.DB) ServiceRepositories {
 	return &ServicesRepoImpl{db}
 

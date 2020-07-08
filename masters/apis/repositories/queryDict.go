@@ -41,4 +41,10 @@ const (
 
 	AddNewServicesQuery       = `insert into services values (?,?,?);`
 	AddNewServicesPricesQuery = `insert into servicesprice values (?,?,?);`
+
+	UpdateServicesQuery = `update services set servicesDesc = ?, servicesStatus = ? where servicesID = ?;`
+
+	UpdateServicesPriceQuery = `insert into servicesprice values (?,?,?)`
+
+	DeleteServicesQuery = `update services set servicesStatus = 'i' where servicesID = ?`
 )
