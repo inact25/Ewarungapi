@@ -16,12 +16,14 @@ func (c ServicesRepoImpl) GetAllServices() ([]*models.ServicesModels, error) {
 	query := "select s.servicesID, s.servicesDesc, max(sp.price) as price from services s inner join servicesprice sp on s.servicesID = sp.priceID group by s.servicesID"
 	data, err := c.db.Query(query)
 	if err != nil {
+		log.Fatal(err)
 		return nil, err
 	}
 	for data.Next() {
 		services := models.ServicesModels{}
-		err := data.Scan(&services.ServicesID, &services.ServicesDate, &services.ServicesPrice)
+		err := data.Scan(&services.ServicesID, &services.ServicesDesc, &services.ServicesPrice)
 		if err != nil {
+			log.Fatal(err)
 			return nil, err
 		}
 		dataServices = append(dataServices, &services)
@@ -61,7 +63,7 @@ func (c ServicesRepoImpl) AddNewServicePrice(services *models.ServicesModels) (s
 	}
 	defer stmt.Close()
 
-	if _, err := stmt.Exec(services.ServicesID, services.ServicesDate, services.ServicesPrice); err != nil {
+	if _, err := stmt.Exec(services.ServicesID, services.ServicesDesc, services.ServicesPrice); err != nil {
 		tx.Rollback()
 		log.Fatalf("%v", err)
 		return "", err

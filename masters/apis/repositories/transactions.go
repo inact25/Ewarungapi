@@ -45,7 +45,7 @@ func (t TransactionRepoImpll) AddTransaction(day string, transactions *models.Tr
 	}
 	defer stmt.Close()
 
-	if _, err := stmt.Exec(transactions.TransactionDate, transactions.ServiceDesc, transactions.MenuDesc, transactions.CategoryDesc, transactions.Quantity); err != nil {
+	if _, err := stmt.Exec(day, transactions.ServiceDesc, transactions.MenuDesc, transactions.CategoryDesc, transactions.Quantity); err != nil {
 		tx.Rollback()
 		return "", err
 	}
@@ -73,16 +73,10 @@ func (t TransactionRepoImpll) DeleteTransaction(transactionID string) (string, e
 
 func (t TransactionRepoImpll) GetAllTransaction() ([]*models.TransactionModels, error) {
 	dataTransaction := []*models.TransactionModels{}
-	query := "select t.transactionID, t.transactionDate, m.menuDesc, p.price,t.Qty, c.categoryDesc, cp.price as 'Favor Price', s.servicesDesc, sp.Price as 'Services Price', (p.price*t.Qty)+cp.price+sp.Price as'Sub Total'  from transaction t" +
-		"inner join menu m on t.menuID = m.menuID" +
-		"inner join price p on p.priceID = m.menuID" +
-		"inner join category c on c.categoryID = t.categoryID" +
-		"inner join categoriesprice cp on cp.priceID = c.categoryID" +
-		"inner join services s on s.servicesID = t.servicesID" +
-		"inner join servicesprice sp on sp.PriceID = s.servicesID" +
-		"group by transactionID;"
+	query := "select t.transactionID, t.transactionDate, m.menuDesc, p.price,t.Qty, c.categoryDesc, cp.price as 'Favor Price', s.servicesDesc, sp.Price as 'Services Price', (p.price*t.Qty)+cp.price+sp.Price as'Sub Total'  from transaction t  inner join menu m on t.menuID = m.menuID inner join price p on p.priceID = m.menuID inner join category c on c.categoryID = t.categoryID inner join categoriesprice cp on cp.priceID = c.categoryID inner join services s on s.servicesID = t.servicesID inner join servicesprice sp on sp.PriceID = s.servicesID group by t.transactionID;"
 	data, err := t.db.Query(query)
 	if err != nil {
+		log.Fatal(err)
 		return nil, err
 	}
 	for data.Next() {
@@ -91,6 +85,7 @@ func (t TransactionRepoImpll) GetAllTransaction() ([]*models.TransactionModels, 
 			&transaction.MenuDesc, &transaction.MenuPrice, &transaction.Quantity,
 			&transaction.CategoryDesc, &transaction.FavorPrice, &transaction.ServiceDesc, &transaction.ServicePrice, &transaction.SubTotal)
 		if err != nil {
+			log.Fatal(err)
 			return nil, err
 		}
 		dataTransaction = append(dataTransaction, &transaction)
@@ -101,23 +96,19 @@ func (t TransactionRepoImpll) GetAllTransaction() ([]*models.TransactionModels, 
 
 func (t TransactionRepoImpll) GetDailyTransaction(date string) ([]*models.TransactionModels, error) {
 	dataTransaction := []*models.TransactionModels{}
-	query, err := t.db.Query(`select t.transactionID, t.transactionDate, m.menuDesc, p.price,t.Qty, c.categoryDesc, cp.price as 'Favor Price', s.servicesDesc, sp.Price as 'Services Price', (p.price*t.Qty)+cp.price+sp.Price as'Sub Total'  from transaction t 
-inner join menu m on t.menuID = m.menuID
-inner join price p on p.priceID = m.menuID
-inner join category c on c.categoryID = t.categoryID
-inner join categoriesprice cp on cp.priceID = c.categoryID
-inner join services s on s.servicesID = t.servicesID
-inner join servicesprice sp on sp.PriceID = s.servicesID
- where transactionDate = ? group by transactionID`, date)
+	query, err := t.db.Query(`select t.transactionID, t.transactionDate, m.menuDesc, p.price,t.Qty, c.categoryDesc, cp.price as 'Favor Price', s.servicesDesc, sp.Price as 'Services Price', (p.price*t.Qty)+cp.price+sp.Price as'Sub Total'  from transaction t  inner join menu m on t.menuID = m.menuID inner join price p on p.priceID = m.menuID inner join category c on c.categoryID = t.categoryID inner join categoriesprice cp on cp.priceID = c.categoryID inner join services s on s.servicesID = t.servicesID inner join servicesprice sp on sp.PriceID = s.servicesID where t.transactionDate like ? group by t.transactionID`, date)
+
 	if err != nil {
+		log.Fatal(err)
 		return nil, err
 	}
 	for query.Next() {
 		transaction := models.TransactionModels{}
 		err := query.Scan(&transaction.TransactionID, &transaction.TransactionDate,
-			&transaction.MenuDesc, &transaction.CategoryDesc, &transaction.Quantity,
-			&transaction.SubTotal)
+			&transaction.MenuDesc, &transaction.MenuPrice, &transaction.Quantity,
+			&transaction.CategoryDesc, &transaction.FavorPrice, &transaction.ServiceDesc, &transaction.ServicePrice, &transaction.SubTotal)
 		if err != nil {
+			log.Fatal(err)
 			return nil, err
 		}
 		dataTransaction = append(dataTransaction, &transaction)
