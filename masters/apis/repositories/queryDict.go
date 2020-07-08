@@ -71,3 +71,36 @@ const (
 
 	DeleteCategoriesQuery = `update category set categoryStatus = 'i' where categoryID = ?`
 )
+
+//transaction
+const (
+	GetLatestMenuPriceByIDQuery = `select p.Price from price p 
+								   inner join menu m on m.menuID = p.priceID
+								   inner join (select priceID, max(priceDate) as maxDate from price 
+								   group by priceID) pj on p.priceID = pj.priceID and p.priceDate = pj.maxDate
+								   where p.priceID = ?;`
+
+	GetLatestServicePriceByIDQuery = `select sp.Price from servicesprice sp 
+									  inner join services s on s.servicesID = sp.priceID
+								   	  inner join (select priceID, max(priceDate) as maxDate from servicesprice 
+								   	  group by priceID) pj on sp.priceID = pj.priceID and sp.priceDate = pj.maxDate
+								   	  where sp.priceID = ?;`
+
+	GetLatestCategoryPriceByIDQuery = `select cp.Price from categoriesprice cp 
+									   inner join category c on c.categoryID = cp.priceID
+									   inner join (select priceID, max(priceDate) as maxDate from categoriesprice 
+									   group by priceID) pj on cp.priceID = pj.priceID and cp.priceDate = pj.maxDate
+									   where cp.priceID = ?;`
+
+	GetAllTransactionsQuery = `select t.transactionID, t.transactionDate,m.menuDesc,t.menuPrice,c.categoryDesc,t.categoryPrice,t.qty,s.servicesDesc, t.servicePrice, 
+							   ((t.menuPrice+t.categoryPrice)*t.qty)+servicePrice as SubTotal
+							   from transaction t 
+							   inner join services s on t.servicesID = s.servicesID
+							   inner join menu m on t.menuID = m.menuID
+							   inner join category c on t.categoryID = c.categoryID;`
+
+	AddNewTransactions = `insert into transaction values (uuid(), ?, ?, ?, ?, ?, ?, ?, ?);`
+
+	UpdateTransactions = `update transaction set servicesID = ?, servicePrice = ?, menuID = ?,menuPrice = ?, 
+						  categoryID = ?, categoryPrice = ?, Qty = ? where transactionID = ?;`
+)
