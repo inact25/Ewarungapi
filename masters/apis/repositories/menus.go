@@ -10,43 +10,73 @@ type MenuRepoImpl struct {
 	db *sql.DB
 }
 
-func (s MenuRepoImpl) UpdateMenu(menu *models.MenuModels) (string, error) {
-
-	log.Println("R :", menu)
-	tx, err := s.db.Begin()
+func (s MenuRepoImpl) GetAllMenu() ([]*models.MenuModels, error) {
+	dataMenus := []*models.MenuModels{}
+	query := GetAllMenusQuery
+	data, err := s.db.Query(query)
+	log.Println("R : ", data)
 	if err != nil {
 		log.Fatal(err)
-		return "", err
+		return nil, err
 	}
-	putMenu, err := s.db.Prepare(UpdateMenuQuery)
-	if err != nil {
-		tx.Rollback()
-		return "", err
+	for data.Next() {
+		menu := models.MenuModels{}
+		err := data.Scan(&menu.MenuID, &menu.MenuDesc, &menu.MenuPrice, &menu.MenuStock, &menu.PriceDate)
+		if err != nil {
+			log.Fatal(err)
+			return nil, err
+
+		}
+		dataMenus = append(dataMenus, &menu)
+		log.Println("R : ", dataMenus)
 	}
-	defer putMenu.Close()
-	if _, err := putMenu.Exec(menu.MenuDesc, menu.MenuStock, menu.MenuID); err != nil {
-		tx.Rollback()
-		return "", err
-	}
-	return "", tx.Commit()
+	return dataMenus, nil
 }
 
-func (s MenuRepoImpl) DeleteMenu(menuID string) (string, error) {
-	tx, err := s.db.Begin()
+func (s MenuRepoImpl) GetAllMenuByStatus(status string) ([]*models.MenuModels, error) {
+	log.Println("R : ", status)
+	dataMenus := []*models.MenuModels{}
+	query := GetAllMenusByStatusQuery
+	data, err := s.db.Query(query, status)
 	if err != nil {
-		return "", err
+		log.Fatal(err)
+		return nil, err
 	}
-	stmt, err := s.db.Prepare("delete from menu where menuID = ?")
+	for data.Next() {
+		menu := models.MenuModels{}
+		err := data.Scan(&menu.MenuID, &menu.MenuDesc, &menu.MenuPrice, &menu.MenuStock, &menu.PriceDate)
+		if err != nil {
+			log.Fatal(err)
+			return nil, err
+
+		}
+		dataMenus = append(dataMenus, &menu)
+		log.Println("R : ", dataMenus)
+	}
+	return dataMenus, nil
+}
+
+func (s MenuRepoImpl) GetAllMenuPrices() ([]*models.MenuPriceModels, error) {
+	dataMenus := []*models.MenuPriceModels{}
+	query := GetAllMenusPrice
+	data, err := s.db.Query(query)
+	log.Println("R : ", data)
 	if err != nil {
-		tx.Rollback()
-		return "", err
+		log.Fatal(err)
+		return nil, err
 	}
-	defer stmt.Close()
-	if _, err := stmt.Exec(menuID); err != nil {
-		tx.Rollback()
-		return "", err
+	for data.Next() {
+		menu := models.MenuPriceModels{}
+		err := data.Scan(&menu.MenuID, &menu.MenuDesc, &menu.MenuPrice, &menu.PriceDate)
+		if err != nil {
+			log.Fatal(err)
+			return nil, err
+
+		}
+		dataMenus = append(dataMenus, &menu)
+		log.Println("R : ", dataMenus)
 	}
-	return "", tx.Commit()
+	return dataMenus, nil
 }
 
 func (s MenuRepoImpl) AddNewMenu(day string, menus *models.MenuModels) (string, error) {
@@ -78,50 +108,64 @@ func (s MenuRepoImpl) AddNewMenu(day string, menus *models.MenuModels) (string, 
 	return "", tx.Commit()
 }
 
-func (s MenuRepoImpl) GetAllMenu() ([]*models.MenuModels, error) {
-	dataMenus := []*models.MenuModels{}
-	query := GetAllMenusQuery
-	data, err := s.db.Query(query)
-	log.Println("R : ", data)
+func (s MenuRepoImpl) UpdateMenu(menu *models.MenuModels) (string, error) {
+
+	log.Println("R :", menu)
+	tx, err := s.db.Begin()
 	if err != nil {
 		log.Fatal(err)
-		return nil, err
+		return "", err
 	}
-	for data.Next() {
-		menu := models.MenuModels{}
-		err := data.Scan(&menu.MenuID, &menu.MenuDesc, &menu.MenuPrice, &menu.MenuStock, &menu.PriceDate)
-		if err != nil {
-			log.Fatal(err)
-			return nil, err
-
-		}
-		dataMenus = append(dataMenus, &menu)
-		log.Println("R : ", dataMenus)
+	putMenu, err := s.db.Prepare(UpdateMenuQuery)
+	if err != nil {
+		tx.Rollback()
+		return "", err
 	}
-	return dataMenus, nil
+	defer putMenu.Close()
+	if _, err := putMenu.Exec(menu.MenuDesc, menu.MenuStock, menu.MenuID); err != nil {
+		tx.Rollback()
+		return "", err
+	}
+	return "", tx.Commit()
 }
 
-func (s MenuRepoImpl) GetAllMenuPrices() ([]*models.MenuPriceModels, error) {
-	dataMenus := []*models.MenuPriceModels{}
-	query := GetAllMenusPrice
-	data, err := s.db.Query(query)
-	log.Println("R : ", data)
+func (s MenuRepoImpl) UpdateMenuPrice(day string, menu *models.MenuPriceModels) (string, error) {
+
+	log.Println("R :", menu)
+	tx, err := s.db.Begin()
 	if err != nil {
 		log.Fatal(err)
-		return nil, err
+		return "", err
 	}
-	for data.Next() {
-		menu := models.MenuPriceModels{}
-		err := data.Scan(&menu.MenuID, &menu.MenuDesc, &menu.Price, &menu.PriceDate)
-		if err != nil {
-			log.Fatal(err)
-			return nil, err
+	putMenu, err := s.db.Prepare(UpdateMenuPriceQuery)
+	if err != nil {
+		tx.Rollback()
+		return "", err
+	}
+	defer putMenu.Close()
+	if _, err := putMenu.Exec(menu.MenuID, day, menu.MenuPrice); err != nil {
+		tx.Rollback()
+		return "", err
+	}
+	return "", tx.Commit()
+}
 
-		}
-		dataMenus = append(dataMenus, &menu)
-		log.Println("R : ", dataMenus)
+func (s MenuRepoImpl) DeleteMenu(menuID string) (string, error) {
+	tx, err := s.db.Begin()
+	if err != nil {
+		return "", err
 	}
-	return dataMenus, nil
+	stmt, err := s.db.Prepare(DeleteMenuQuery)
+	if err != nil {
+		tx.Rollback()
+		return "", err
+	}
+	defer stmt.Close()
+	if _, err := stmt.Exec(menuID); err != nil {
+		tx.Rollback()
+		return "", err
+	}
+	return "", tx.Commit()
 }
 
 func InitMenuRepoImpl(db *sql.DB) MenuRepositories {
