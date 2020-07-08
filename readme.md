@@ -1,6 +1,6 @@
-#EWarungApi
+# EWarungApi
 
-##Feature
+## Feature
 - view all menu
 - addmenu (product ex: food, fashion and etc)
 - menu price update without affecting an old data (menu price and transactions)
@@ -24,16 +24,16 @@
 - add transaction
 - update transaction
 
-##database design
-![database design](ttps://1.bp.blogspot.com/-K0i0Qhtc0Ts/XvH9C1vf0FI/AAAAAAAAIRA/0gxf3rmxr-8Ez9wBHhI0o25mD9WW6zXvwCK4BGAsYHg/s697/cft.PNG)
+## database design
+![database design](https://1.bp.blogspot.com/-n5ccjjLODRw/XwYDpBotc1I/AAAAAAAAIrY/Bdh0bo2GR9guJJ1fX2Mfj_Y3dIr3-CbLACK4BGAsYHg/s847/Annotation%2B2020-07-09%2B003258.png)
  
-#feature on upcoming state
+# feature on upcoming state
 - api validation
 - jwt authentication
 - multi add transactionS
 
-#Menu
-####GET EXAMPLE
+# Menu
+#### GET EXAMPLE
 ````
 menus/		=> ALL
 menus/prices	=> Prices Data
@@ -41,7 +41,7 @@ menus/a 	=> Active
 menus/i 	=> Inactive 
 ````
 
-####POST EXAMPLE :
+#### POST EXAMPLE :
 ````
 {
     "menu_id": "M003",
@@ -51,9 +51,9 @@ menus/i 	=> Inactive
 }
 ````
 
-###PUT EXAMPLE :
+### PUT EXAMPLE :
 
-#####MenuPath : /menu
+##### MenuPath : /menu
 ````
 {
     "menu_id": "M001",
@@ -62,28 +62,28 @@ menus/i 	=> Inactive
     "menu_status": "A"
 }
 ````
-####PricePath : /menu/prices
+#### PricePath : /menu/prices
 ````
 {
      "menu_id": "M001",
      "menu_price": "17500"
 }
 ````
-####DELETE :
+#### DELETE :
 ````
 menus/{menu_id} => SOFT DELETE
 ````
 
-#Services
+# Services
 
-####GET EXAMPLE
+#### GET EXAMPLE
 ````
 services/	=> ALL
 services/a	=> Active
 services/i	=> Inactive 
 ````
 
-####POST EXAMPLE:
+#### POST EXAMPLE:
 ````
 {
      "services_id": "S002",
@@ -93,9 +93,9 @@ services/i	=> Inactive
 }
 ````
 
-####PUT EXAMPLE :
+#### PUT EXAMPLE :
 
-#####ServicesPath : /services
+##### ServicesPath : /services
 ````
 {
     "services_id": "S001",
@@ -104,7 +104,7 @@ services/i	=> Inactive
 }
 ````
 
-#####ServicesPricePath : /services/prices
+##### ServicesPricePath : /services/prices
 ````
 {
      "services_id": "S002",
@@ -112,21 +112,21 @@ services/i	=> Inactive
 }
 ````
 
-####DELETE :
+#### DELETE :
 ````
 services/{services_id} => SOFT DELETE
 ````
 
-#Categories
+# Categories
 
-####GET EXAMPLE
+#### GET EXAMPLE
 ````
 categories/	=> ALL
 categories/a	=> Active
 categories/i	=> Inactive 
 ````
 
-####POST EXAMPLE:
+#### POST EXAMPLE:
 ````
 {
      "categories_id": "S002",
@@ -136,9 +136,9 @@ categories/i	=> Inactive
 }
 ````
 
-####PUT EXAMPLE :
+#### PUT EXAMPLE :
 
-#####Categories : /categories
+##### Categories : /categories
 ````
 {
     "categories_id": "C001",
@@ -147,7 +147,7 @@ categories/i	=> Inactive
 }
 ````
 
-#####Categories Price : /categories/prices
+##### Categories Price : /categories/prices
 ````
 {
      "categories_id": "C001",
@@ -155,19 +155,19 @@ categories/i	=> Inactive
 }
 ````
 
-####DELETE :
+#### DELETE :
 ````
 categories/{categories_id} => SOFT DELETE
 ````
 
-#Transactions
+# Transactions
 
-####GET EXAMPLE
+#### GET EXAMPLE
 ````
 /transactions
 ````
 
-####POST EXAMPLE
+#### POST EXAMPLE
 ````
 {
      "services_desc": "S002",
@@ -177,7 +177,7 @@ categories/{categories_id} => SOFT DELETE
 }
 ````
 
-####PUT EXAMPLE
+#### PUT EXAMPLE
 ````
 { 
      "transaction_id": "84d60a11-bffa-11ea-b9f1-705a0f09d721",
