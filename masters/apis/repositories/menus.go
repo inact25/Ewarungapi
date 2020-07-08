@@ -55,7 +55,7 @@ func (s MenuRepoImpl) AddNewMenu(menus *models.MenuModels) (string, error) {
 	if err != nil {
 		return "", err
 	}
-	stmt, err := s.db.Prepare("insert into menu values (?,?,?)")
+	stmt, err := s.db.Prepare(AddNewMenuQuery)
 	if err != nil {
 		tx.Rollback()
 		return "", err
@@ -68,18 +68,62 @@ func (s MenuRepoImpl) AddNewMenu(menus *models.MenuModels) (string, error) {
 	return "", tx.Commit()
 }
 
+func (s MenuRepoImpl) AddNewMenuPrices(day string, menus *models.MenuPriceModels) (string, error) {
+	tx, err := s.db.Begin()
+	if err != nil {
+		log.Fatal(err)
+		return "", err
+	}
+	stmt, err := s.db.Prepare(AddNewMenuPricesQuery)
+	if err != nil {
+		tx.Rollback()
+		return "", err
+	}
+	defer stmt.Close()
+	if _, err := stmt.Exec(menus.PriceID, day, menus.Price); err != nil {
+		tx.Rollback()
+		return "", err
+	}
+	return "", tx.Commit()
+}
+
 func (s MenuRepoImpl) GetAllMenu() ([]*models.MenuModels, error) {
 	dataMenus := []*models.MenuModels{}
-	query := "select m.menuID, m.menuDesc, max(p.price) as price, m.menuStock from menu m left join price p on m.menuID = p.priceID group by menuID;"
+	query := GetAllMenusQuery
 	data, err := s.db.Query(query)
 	log.Println("R : ", data)
 	if err != nil {
+		log.Fatal(err)
 		return nil, err
 	}
 	for data.Next() {
 		menu := models.MenuModels{}
-		err := data.Scan(&menu.MenuID, &menu.MenuDesc, &menu.MenuDesc, &menu.MenuPrice, &menu.MenuStock)
+		err := data.Scan(&menu.MenuID, &menu.MenuDesc, &menu.MenuPrice, &menu.MenuStock)
 		if err != nil {
+			log.Fatal(err)
+			return nil, err
+
+		}
+		dataMenus = append(dataMenus, &menu)
+		log.Println("R : ", dataMenus)
+	}
+	return dataMenus, nil
+}
+
+func (s MenuRepoImpl) GetAllMenuPrices() ([]*models.MenuPriceModels, error) {
+	dataMenus := []*models.MenuPriceModels{}
+	query := GetAllMenusPrice
+	data, err := s.db.Query(query)
+	log.Println("R : ", data)
+	if err != nil {
+		log.Fatal(err)
+		return nil, err
+	}
+	for data.Next() {
+		menu := models.MenuPriceModels{}
+		err := data.Scan(&menu.PriceID, &menu.PriceDate, &menu.Price)
+		if err != nil {
+			log.Fatal(err)
 			return nil, err
 
 		}

@@ -42,6 +42,24 @@ func (s MenuUseCaseImpl) GetAllMenu() ([]*models.MenuModels, error) {
 	}
 	return menu, nil
 }
+
+func (s MenuUseCaseImpl) GetAllMenuPrices() ([]*models.MenuPriceModels, error) {
+	menu, err := s.menuRepo.GetAllMenuPrices()
+	log.Println("U : ", menu)
+	if err != nil {
+		return nil, err
+	}
+	return menu, nil
+}
+
+func (s MenuUseCaseImpl) AddNewMenuPrices(day string, products *models.MenuPriceModels) (string, error) {
+	category, err := s.menuRepo.AddNewMenuPrices(day, products)
+	if err != nil {
+		return "", err
+	}
+	return category, nil
+}
+
 func InitMenuUseCase(menuRepo repositories.MenuRepositories) MenuUseCases {
 	return &MenuUseCaseImpl{menuRepo}
 }
