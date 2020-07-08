@@ -11,66 +11,82 @@ type ServicesRepoImpl struct {
 	db *sql.DB
 }
 
-func (c ServicesRepoImpl) GetAllServices() ([]*models.ServicesModels, error) {
+func (s ServicesRepoImpl) GetAllServices() ([]*models.ServicesModels, error) {
 	dataServices := []*models.ServicesModels{}
-	query := "select s.servicesID, s.servicesDesc, max(sp.price) as price from services s inner join servicesprice sp on s.servicesID = sp.priceID group by s.servicesID"
-	data, err := c.db.Query(query)
+	query := GetAllServices
+	data, err := s.db.Query(query)
+	log.Println("R : ", data)
 	if err != nil {
 		log.Fatal(err)
 		return nil, err
 	}
 	for data.Next() {
 		services := models.ServicesModels{}
-		err := data.Scan(&services.ServicesID, &services.ServicesDesc, &services.ServicesPrice)
+		err := data.Scan(&services.ServicesID, &services.ServicesDesc, &services.ServicePrice, &services.ServicesStatus, &services.PriceDate)
 		if err != nil {
 			log.Fatal(err)
 			return nil, err
+
 		}
 		dataServices = append(dataServices, &services)
+		log.Println("R : ", dataServices)
 	}
 	return dataServices, nil
 }
 
-func (c ServicesRepoImpl) AddNewServices(services *models.ServicesModels) (string, error) {
-	tx, err := c.db.Begin()
+func (s ServicesRepoImpl) GetAllServicesByStatus(status string) ([]*models.ServicesModels, error) {
+	log.Println("R : ", status)
+	dataServices := []*models.ServicesModels{}
+	query := GetAllServicesByStatus
+	data, err := s.db.Query(query, status)
 	if err != nil {
-		return "", err
+		log.Fatal(err)
+		return nil, err
 	}
-	stmt, err := c.db.Prepare("insert into services values (?,?)")
-	if err != nil {
-		tx.Rollback()
-		return "", err
-	}
-	defer stmt.Close()
+	for data.Next() {
+		services := models.ServicesModels{}
+		err := data.Scan(&services.ServicesID, &services.ServicesDesc, &services.ServicePrice, &services.ServicesStatus, &services.PriceDate)
+		if err != nil {
+			log.Fatal(err)
+			return nil, err
 
-	if _, err := stmt.Exec(services.ServicesID, services.ServicesDesc); err != nil {
+		}
+		dataServices = append(dataServices, &services)
+		log.Println("R : ", dataServices)
+	}
+	return dataServices, nil
+}
+
+func (s ServicesRepoImpl) AddNewServices(day string, services *models.ServicesModels) (string, error) {
+	tx, err := s.db.Begin()
+	if err != nil {
+		log.Fatal(err)
+		return "", err
+	}
+	addService, err := s.db.Prepare(AddNewServicesQuery)
+	if err != nil {
 		tx.Rollback()
-		log.Fatalf("%v", err)
+		return "", err
+	}
+	defer addService.Close()
+	if _, err := addService.Exec(services.ServicesID, services.ServicesDesc, services.ServicesStatus); err != nil {
+		tx.Rollback()
+		return "", err
+	}
+	addPrice, err := s.db.Prepare(AddNewServicesPricesQuery)
+	if err != nil {
+		tx.Rollback()
+		return "", err
+	}
+	defer addPrice.Close()
+	if _, err := addPrice.Exec(services.ServicesID, day, services.PriceDate); err != nil {
+		tx.Rollback()
 		return "", err
 	}
 	return "", tx.Commit()
 }
 
-func (c ServicesRepoImpl) AddNewServicePrice(services *models.ServicesModels) (string, error) {
-	tx, err := c.db.Begin()
-	if err != nil {
-		return "", err
-	}
-	stmt, err := c.db.Prepare("insert into servicesprice values (?,?,?)")
-	if err != nil {
-		tx.Rollback()
-		return "", err
-	}
-	defer stmt.Close()
-
-	if _, err := stmt.Exec(services.ServicesID, services.ServicesDesc, services.ServicesPrice); err != nil {
-		tx.Rollback()
-		log.Fatalf("%v", err)
-		return "", err
-	}
-	return "", tx.Commit()
-}
-func InitServiceRepoImpl(db *sql.DB) CategoryRepositories {
-	return &CategoriesRepoImpl{db}
+func InitServiceRepoImpl(db *sql.DB) ServiceRepositories {
+	return &ServicesRepoImpl{db}
 
 }

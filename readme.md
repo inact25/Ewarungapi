@@ -1,8 +1,9 @@
 -- Menu
 #GET EXAMPLE
-menus/	=> ALL
-menus/a => Active
-menus/i => Inactive 
+menus/		=> ALL
+menus/prices	=> Prices Data
+menus/a 	=> Active
+menus/i 	=> Inactive 
 
 #POST EXAMPLE :
 {
@@ -18,7 +19,8 @@ menus/i => Inactive
 {
     "menu_id": "M001",
     "menu_desc": "Ayam Crispy",
-    "menu_stock": "150"
+    "menu_stock": "150",
+    "menu_status": "A"
 }
 
 ==> Price
@@ -29,5 +31,19 @@ menus/i => Inactive
 
 #DELETE :
 menus/menu_id => SOFT DELETE
+
+-- Services
+#GET EXAMPLE
+services/	=> ALL
+services/a	=> Active
+services/i	=> Inactive 
+
+#POST EXAMPLE:
+{
+     "services_id": "S002",
+     "services_desc": "Wifi Premium",
+     "price_date": "5000",
+     "services_status": "A"        
+}
 
 

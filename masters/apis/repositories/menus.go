@@ -21,7 +21,7 @@ func (s MenuRepoImpl) GetAllMenu() ([]*models.MenuModels, error) {
 	}
 	for data.Next() {
 		menu := models.MenuModels{}
-		err := data.Scan(&menu.MenuID, &menu.MenuDesc, &menu.MenuPrice, &menu.MenuStock, &menu.PriceDate)
+		err := data.Scan(&menu.MenuID, &menu.MenuDesc, &menu.MenuPrice, &menu.MenuStock, &menu.MenuStatus, &menu.PriceDate)
 		if err != nil {
 			log.Fatal(err)
 			return nil, err
@@ -44,7 +44,7 @@ func (s MenuRepoImpl) GetAllMenuByStatus(status string) ([]*models.MenuModels, e
 	}
 	for data.Next() {
 		menu := models.MenuModels{}
-		err := data.Scan(&menu.MenuID, &menu.MenuDesc, &menu.MenuPrice, &menu.MenuStock, &menu.PriceDate)
+		err := data.Scan(&menu.MenuID, &menu.MenuDesc, &menu.MenuPrice, &menu.MenuStock, &menu.MenuStatus, &menu.PriceDate)
 		if err != nil {
 			log.Fatal(err)
 			return nil, err
@@ -91,7 +91,7 @@ func (s MenuRepoImpl) AddNewMenu(day string, menus *models.MenuModels) (string, 
 		return "", err
 	}
 	defer addMenu.Close()
-	if _, err := addMenu.Exec(menus.MenuID, menus.MenuDesc, menus.MenuStock); err != nil {
+	if _, err := addMenu.Exec(menus.MenuID, menus.MenuDesc, menus.MenuStock, &menus.MenuStatus); err != nil {
 		tx.Rollback()
 		return "", err
 	}
@@ -122,7 +122,7 @@ func (s MenuRepoImpl) UpdateMenu(menu *models.MenuModels) (string, error) {
 		return "", err
 	}
 	defer putMenu.Close()
-	if _, err := putMenu.Exec(menu.MenuDesc, menu.MenuStock, menu.MenuID); err != nil {
+	if _, err := putMenu.Exec(menu.MenuDesc, menu.MenuStock, menu.MenuStatus, menu.MenuID); err != nil {
 		tx.Rollback()
 		return "", err
 	}

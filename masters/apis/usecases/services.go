@@ -3,37 +3,39 @@ package usecases
 import (
 	"github.com/inact25/E-WarungApi/masters/apis/models"
 	"github.com/inact25/E-WarungApi/masters/apis/repositories"
+	"log"
 )
 
 type ServiceUseCaseImpl struct {
-	serviceRepo repositories.ServicesRepoImpl
+	serviceRepo repositories.ServiceRepositories
 }
 
-func (s ServiceUseCaseImpl) GetAllServices() ([]*models.ServicesModels, error) {
-	services, err := s.serviceRepo.GetAllServices()
+func (s ServiceUseCaseImpl) GetAllServicesByStatus(status string) ([]*models.ServicesModels, error) {
+	menu, err := s.serviceRepo.GetAllServicesByStatus(status)
+	log.Println("U : ", status)
 	if err != nil {
 		return nil, err
 	}
-	return services, nil
+	return menu, nil
 }
 
-func (s ServiceUseCaseImpl) AddNewServices(services *models.ServicesModels) (string, error) {
-	service, err := s.serviceRepo.AddNewServices(services)
+func (s ServiceUseCaseImpl) GetAllServices() ([]*models.ServicesModels, error) {
+	menu, err := s.serviceRepo.GetAllServices()
+	log.Println("U : ", menu)
+	if err != nil {
+		return nil, err
+	}
+	return menu, nil
+}
+
+func (s ServiceUseCaseImpl) AddNewServices(day string, services *models.ServicesModels) (string, error) {
+	category, err := s.serviceRepo.AddNewServices(day, services)
 	if err != nil {
 		return "", err
 	}
-	return service, nil
+	return category, nil
 }
 
-func (s ServiceUseCaseImpl) AddNewServicesPrice(services *models.ServicesModels) (string, error) {
-	service, err := s.serviceRepo.AddNewServicePrice(services)
-	if err != nil {
-		return "", err
-	}
-	return service, nil
-
-}
-
-func InitServiceUseCase(serviceRepo repositories.ServicesRepoImpl) ServiceUseCases {
+func InitServiceUseCase(serviceRepo repositories.ServiceRepositories) ServiceUseCases {
 	return &ServiceUseCaseImpl{serviceRepo}
 }
