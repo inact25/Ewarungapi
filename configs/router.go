@@ -13,10 +13,12 @@ func CreateRouter() *mux.Router {
 }
 
 func RunServer(router *mux.Router) {
-	//routerPort ambil dari env, 6969 default port
-	port := utils.GetCustomConf("RouterPort", "6969")
-	log.Printf("Server is now listening at %v.....\n", port)
-	err := http.ListenAndServe("localhost: "+port, router)
+
+	routerHost := utils.GetCustomConf("RouterHost", "yourRouterHost")
+	routerPort := utils.GetCustomConf("RouterPort", "8080")
+
+	log.Printf("Server is now listening at %v.....\n", routerPort)
+	err := http.ListenAndServe(routerHost+": "+routerPort, router)
 	if err != nil {
 		log.Fatal(err)
 	}
