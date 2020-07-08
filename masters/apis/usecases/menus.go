@@ -11,6 +11,7 @@ type MenuUseCaseImpl struct {
 }
 
 func (s MenuUseCaseImpl) UpdateMenu(menu *models.MenuModels) (string, error) {
+	log.Println("U :", menu)
 	product, err := s.menuRepo.UpdateMenu(menu)
 	if err != nil {
 		return "", err
@@ -26,8 +27,8 @@ func (s MenuUseCaseImpl) DeleteMenu(menuID string) (string, error) {
 	return product, nil
 }
 
-func (s MenuUseCaseImpl) AddNewMenu(products *models.MenuModels) (string, error) {
-	category, err := s.menuRepo.AddNewMenu(products)
+func (s MenuUseCaseImpl) AddNewMenu(day string, products *models.MenuModels) (string, error) {
+	category, err := s.menuRepo.AddNewMenu(day, products)
 	if err != nil {
 		return "", err
 	}
@@ -50,14 +51,6 @@ func (s MenuUseCaseImpl) GetAllMenuPrices() ([]*models.MenuPriceModels, error) {
 		return nil, err
 	}
 	return menu, nil
-}
-
-func (s MenuUseCaseImpl) AddNewMenuPrices(day string, products *models.MenuPriceModels) (string, error) {
-	category, err := s.menuRepo.AddNewMenuPrices(day, products)
-	if err != nil {
-		return "", err
-	}
-	return category, nil
 }
 
 func InitMenuUseCase(menuRepo repositories.MenuRepositories) MenuUseCases {

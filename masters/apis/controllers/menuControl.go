@@ -23,9 +23,6 @@ func MenuControll(r *mux.Router, service usecases.MenuUseCases) {
 	r.HandleFunc("/menus/prices", MenuHandler.GetAllMenuPrices).Methods(http.MethodGet)
 	r.HandleFunc("/menus/prices/", MenuHandler.GetAllMenuPrices).Methods(http.MethodGet)
 
-	r.HandleFunc("/menus/prices", MenuHandler.AddNewMenuPrices).Methods(http.MethodPost)
-	r.HandleFunc("/menus/prices/", MenuHandler.AddNewMenuPrices).Methods(http.MethodPost)
-
 	r.HandleFunc("/menus", MenuHandler.AddNewMenu).Methods(http.MethodPost)
 	r.HandleFunc("/menus/", MenuHandler.AddNewMenu).Methods(http.MethodPost)
 
@@ -64,7 +61,9 @@ func (s MenusHandler) DeleteMenu(w http.ResponseWriter, r *http.Request) {
 
 func (s MenusHandler) UpdateMenu(w http.ResponseWriter, r *http.Request) {
 	menus := &models.MenuModels{}
+
 	getJsonDataCheck := json.NewDecoder(r.Body).Decode(&menus)
+	log.Println("C :", menus)
 	utils.ErrorCheck(getJsonDataCheck, "Fatal")
 	_, err := s.MenuUseCase.UpdateMenu(menus)
 	utils.ErrorCheck(err, "Fatal")
@@ -73,22 +72,14 @@ func (s MenusHandler) UpdateMenu(w http.ResponseWriter, r *http.Request) {
 }
 
 func (s MenusHandler) AddNewMenu(w http.ResponseWriter, r *http.Request) {
-	menus := &models.MenuModels{}
-	getJsonDataCheck := json.NewDecoder(r.Body).Decode(&menus)
-	utils.ErrorCheck(getJsonDataCheck, "Fatal")
-	_, err := s.MenuUseCase.AddNewMenu(menus)
-	utils.ErrorCheck(err, "Fatal")
-	w.Write([]byte("Category Succesfully Added"))
-
-}
-
-func (s MenusHandler) AddNewMenuPrices(w http.ResponseWriter, r *http.Request) {
 	dt := time.Now()
 	day := dt.Format("2006.01.02 15:04:05")
-	menus := &models.MenuPriceModels{}
+	menus := &models.MenuModels{}
 	getJsonDataCheck := json.NewDecoder(r.Body).Decode(&menus)
+	log.Println(getJsonDataCheck)
+	log.Println(menus)
 	utils.ErrorCheck(getJsonDataCheck, "Fatal")
-	_, err := s.MenuUseCase.AddNewMenuPrices(day, menus)
+	_, err := s.MenuUseCase.AddNewMenu(day, menus)
 	utils.ErrorCheck(err, "Fatal")
 	w.Write([]byte("Category Succesfully Added"))
 

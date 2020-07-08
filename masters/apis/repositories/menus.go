@@ -11,22 +11,21 @@ type MenuRepoImpl struct {
 }
 
 func (s MenuRepoImpl) UpdateMenu(menu *models.MenuModels) (string, error) {
+
+	log.Println("R :", menu)
 	tx, err := s.db.Begin()
 	if err != nil {
-		log.Fatalf("%v", err)
+		log.Fatal(err)
 		return "", err
 	}
-	stmt, err := s.db.Prepare("update menu set menuDesc = ?, menuStock = ? where menutID = ?")
+	putMenu, err := s.db.Prepare(UpdateMenuQuery)
 	if err != nil {
 		tx.Rollback()
-		log.Fatalf("%v", err)
 		return "", err
 	}
-	defer stmt.Close()
-
-	if _, err := stmt.Exec(menu.MenuDesc, menu.MenuStock); err != nil {
+	defer putMenu.Close()
+	if _, err := putMenu.Exec(menu.MenuDesc, menu.MenuStock, menu.MenuID); err != nil {
 		tx.Rollback()
-		log.Fatalf("%v", err)
 		return "", err
 	}
 	return "", tx.Commit()
@@ -50,37 +49,29 @@ func (s MenuRepoImpl) DeleteMenu(menuID string) (string, error) {
 	return "", tx.Commit()
 }
 
-func (s MenuRepoImpl) AddNewMenu(menus *models.MenuModels) (string, error) {
-	tx, err := s.db.Begin()
-	if err != nil {
-		return "", err
-	}
-	stmt, err := s.db.Prepare(AddNewMenuQuery)
-	if err != nil {
-		tx.Rollback()
-		return "", err
-	}
-	defer stmt.Close()
-	if _, err := stmt.Exec(menus.MenuID, menus.MenuDesc, menus.MenuStock); err != nil {
-		tx.Rollback()
-		return "", err
-	}
-	return "", tx.Commit()
-}
-
-func (s MenuRepoImpl) AddNewMenuPrices(day string, menus *models.MenuPriceModels) (string, error) {
+func (s MenuRepoImpl) AddNewMenu(day string, menus *models.MenuModels) (string, error) {
 	tx, err := s.db.Begin()
 	if err != nil {
 		log.Fatal(err)
 		return "", err
 	}
-	stmt, err := s.db.Prepare(AddNewMenuPricesQuery)
+	addMenu, err := s.db.Prepare(AddNewMenuQuery)
 	if err != nil {
 		tx.Rollback()
 		return "", err
 	}
-	defer stmt.Close()
-	if _, err := stmt.Exec(menus.PriceID, day, menus.Price); err != nil {
+	defer addMenu.Close()
+	if _, err := addMenu.Exec(menus.MenuID, menus.MenuDesc, menus.MenuStock); err != nil {
+		tx.Rollback()
+		return "", err
+	}
+	addPrice, err := s.db.Prepare(AddNewMenuPricesQuery)
+	if err != nil {
+		tx.Rollback()
+		return "", err
+	}
+	defer addPrice.Close()
+	if _, err := addPrice.Exec(menus.MenuID, day, menus.MenuPrice); err != nil {
 		tx.Rollback()
 		return "", err
 	}
@@ -98,7 +89,7 @@ func (s MenuRepoImpl) GetAllMenu() ([]*models.MenuModels, error) {
 	}
 	for data.Next() {
 		menu := models.MenuModels{}
-		err := data.Scan(&menu.MenuID, &menu.MenuDesc, &menu.MenuPrice, &menu.MenuStock)
+		err := data.Scan(&menu.MenuID, &menu.MenuDesc, &menu.MenuPrice, &menu.MenuStock, &menu.PriceDate)
 		if err != nil {
 			log.Fatal(err)
 			return nil, err
@@ -121,7 +112,7 @@ func (s MenuRepoImpl) GetAllMenuPrices() ([]*models.MenuPriceModels, error) {
 	}
 	for data.Next() {
 		menu := models.MenuPriceModels{}
-		err := data.Scan(&menu.PriceID, &menu.PriceDate, &menu.Price)
+		err := data.Scan(&menu.MenuID, &menu.MenuDesc, &menu.Price, &menu.PriceDate)
 		if err != nil {
 			log.Fatal(err)
 			return nil, err

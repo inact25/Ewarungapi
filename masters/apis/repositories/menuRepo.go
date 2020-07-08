@@ -7,6 +7,5 @@ type MenuRepositories interface {
 	GetAllMenuPrices() ([]*models.MenuPriceModels, error)
 	UpdateMenu(products *models.MenuModels) (string, error)
 	DeleteMenu(MenuID string) (string, error)
-	AddNewMenu(Menus *models.MenuModels) (string, error)
-	AddNewMenuPrices(day string, Menus *models.MenuPriceModels) (string, error)
+	AddNewMenu(day string, Menus *models.MenuModels) (string, error)
 }
