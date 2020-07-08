@@ -2,18 +2,21 @@
 
 ## Feature
 - view all menu
+- view active or inactive menu
 - addmenu (product ex: food, fashion and etc)
 - menu price update without affecting an old data (menu price and transactions)
 - update menu
 - delete menu (safe delete)
 
 - view all services
+- view active or inactive services
 - add service (services ex: live music, romance dinner and etc )
 - service price update without affecting an old data (service price and transactions)
 - update service
 - delete service (safe delete)
 
 - view all categories
+- view active or inactive categories
 - add category (category ex : food category = 'pedas','normal' and etc)
 - category price update without affecting an old data (category price and transactions)
 - update service
@@ -21,8 +24,8 @@
 
 - view all transactions
 - view daily transactions
-- add transaction
-- update transaction
+- add transaction (with latest price data)
+- update transaction (with latest price data)
 
 ## database design
 ![database design](https://1.bp.blogspot.com/-n5ccjjLODRw/XwYDpBotc1I/AAAAAAAAIrY/Bdh0bo2GR9guJJ1fX2Mfj_Y3dIr3-CbLACK4BGAsYHg/s847/Annotation%2B2020-07-09%2B003258.png)
