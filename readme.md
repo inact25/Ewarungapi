@@ -28,7 +28,7 @@
 - update transaction (with latest price data)
 
 ## database design
-![database design](https://1.bp.blogspot.com/-n5ccjjLODRw/XwYDpBotc1I/AAAAAAAAIrY/Bdh0bo2GR9guJJ1fX2Mfj_Y3dIr3-CbLACK4BGAsYHg/s847/Annotation%2B2020-07-09%2B003258.png)
+![database design](https://1.bp.blogspot.com/-yOYChEY4Irk/XwYF-JEC0_I/AAAAAAAAIr0/1jhx8lNRKQ4o1tj5UFbmA3KRRTMy4oN6ACK4BGAsYHg/s867/Annotation%2B2020-07-09%2B004401.png)
  
 # feature on upcoming state
 - api validation
