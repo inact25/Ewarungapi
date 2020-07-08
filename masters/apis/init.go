@@ -18,7 +18,7 @@ func Init(r *mux.Router, db *sql.DB) {
 	servicesUseCase := usecases.InitServiceUseCase(servicesRepo)
 	controllers.ServicesControll(r, servicesUseCase)
 
-	categoriesRepo := repositories.InitCategoryRepoImpl(db)
+	categoriesRepo := repositories.InitCategoriesRepoImpl(db)
 	categoriesUseCase := usecases.InitCategoryUseCase(categoriesRepo)
 	controllers.CategoriesControll(r, categoriesUseCase)
 

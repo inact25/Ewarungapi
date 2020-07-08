@@ -26,7 +26,7 @@ const (
 	DeleteMenuQuery = `update menu set menuStatus = 'i' where menuID = ?`
 )
 
-//Menu
+//Services
 const (
 	GetAllServices = `select sp.priceID,s.servicesDesc, sp.Price,s.servicesStatus, sp.priceDate from servicesprice sp 
 					  inner join services s on s.servicesID = sp.priceID
@@ -47,4 +47,27 @@ const (
 	UpdateServicesPriceQuery = `insert into servicesprice values (?,?,?)`
 
 	DeleteServicesQuery = `update services set servicesStatus = 'i' where servicesID = ?`
+)
+
+//Categories
+const (
+	GetAllCategories = `select cp.priceID,c.categoryDesc, cp.Price,c.categoryStatus, cp.priceDate from categoriesprice cp 
+						inner join category c on c.categoryID = cp.priceID
+						inner join (select priceID, max(priceDate) as maxDate from categoriesprice 
+						group by priceID) pj on cp.priceID = pj.priceID and cp.priceDate = pj.maxDate;`
+
+	GetAllCategoriesByStatus = `select cp.priceID,c.categoryDesc, cp.Price,c.categoryStatus, cp.priceDate from categoriesprice cp 
+						inner join category c on c.categoryID = cp.priceID
+						inner join (select priceID, max(priceDate) as maxDate from categoriesprice 
+						group by priceID) pj on cp.priceID = pj.priceID and cp.priceDate = pj.maxDate 
+						where categoryStatus = ?;`
+
+	AddNewCategoriesQuery       = `insert into category values (?,?,?);`
+	AddNewCategoriesPricesQuery = `insert into categoriesprice values (?,?,?);`
+
+	UpdateCategoriesQuery = `update category set categoryDesc = ?, categoryStatus = ? where categoryID = ?;`
+
+	UpdateCategoriesPriceQuery = `insert into categoriesprice values (?,?,?)`
+
+	DeleteCategoriesQuery = `update category set categoryStatus = 'i' where categoryID = ?`
 )
