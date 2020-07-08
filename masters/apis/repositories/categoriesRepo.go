@@ -2,9 +2,11 @@ package repositories
 
 import "github.com/inact25/E-WarungApi/masters/apis/models"
 
-type CategoryRepositories interface {
-	GetAllCategories() ([]*models.CategoryModels, error)
-	GetAllCategoriesPrice() ([]*models.CategoryPriceModels, error)
-	AddNewCategory(category *models.CategoryModels) (string, error)
-	AddNewCategoryPrice(day string, categories *models.CategoryPriceModels) (string, error)
+type CategoriesRepositories interface {
+	GetAllCategories() ([]*models.CategoriesModels, error)
+	GetAllCategoriesByStatus(status string) ([]*models.CategoriesModels, error)
+	AddNewCategories(day string, categories *models.CategoriesModels) (string, error)
+	UpdateCategories(categories *models.CategoriesModels) (string, error)
+	UpdateCategoriesPrice(day string, services *models.CategoriesModels) (string, error)
+	DeleteCategories(categoriesID string) (string, error)
 }

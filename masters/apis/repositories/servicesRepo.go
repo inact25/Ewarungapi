@@ -3,7 +3,10 @@ package repositories
 import "github.com/inact25/E-WarungApi/masters/apis/models"
 
 type ServiceRepositories interface {
-	GetAllCategories() ([]*models.CategoryModels, error)
-	AddNewCategory(category *models.CategoryModels) (string, error)
-	AddNewCategoryPrice(categories *models.CategoryModels) (string, error)
+	GetAllServices() ([]*models.ServicesModels, error)
+	GetAllServicesByStatus(status string) ([]*models.ServicesModels, error)
+	AddNewServices(day string, services *models.ServicesModels) (string, error)
+	UpdateServices(services *models.ServicesModels) (string, error)
+	UpdateServicesPrice(day string, services *models.ServicesModels) (string, error)
+	DeleteServices(servicesID string) (string, error)
 }
