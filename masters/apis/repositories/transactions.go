@@ -10,111 +10,114 @@ type TransactionRepoImpll struct {
 	db *sql.DB
 }
 
-func (t TransactionRepoImpll) UpdateTransaction(transactions *models.TransactionModels) (string, error) {
-
-	tx, err := t.db.Begin()
-	if err != nil {
-		log.Fatalf("%v", err)
-		return "", err
-	}
-	stmt, err := t.db.Prepare("update transaction set serviceID = ?, menuID = ?, categoryID = ?, Qty = ? where transactionID = ?")
-	if err != nil {
-		tx.Rollback()
-		log.Fatalf("%v", err)
-		return "", err
-	}
-	defer stmt.Close()
-
-	if _, err := stmt.Exec(transactions.ServiceDesc, transactions.MenuDesc, transactions.CategoryDesc, transactions.Quantity, transactions.TransactionID); err != nil {
-		tx.Rollback()
-		log.Fatalf("%v", err)
-		return "", err
-	}
-	return "", tx.Commit()
-}
-
-func (t TransactionRepoImpll) AddTransaction(day string, transactions *models.TransactionModels) (string, error) {
-	tx, err := t.db.Begin()
-	if err != nil {
-		return "", err
-	}
-	stmt, err := t.db.Prepare("insert into transaction values (uuid(),?,?,?,?,?) ")
-	if err != nil {
-		tx.Rollback()
-		return "", err
-	}
-	defer stmt.Close()
-
-	if _, err := stmt.Exec(day, transactions.ServiceDesc, transactions.MenuDesc, transactions.CategoryDesc, transactions.Quantity); err != nil {
-		tx.Rollback()
-		return "", err
-	}
-	return "", tx.Commit()
-}
-
-func (t TransactionRepoImpll) DeleteTransaction(transactionID string) (string, error) {
-	log.Println("r : ", transactionID)
-	tx, err := t.db.Begin()
-	if err != nil {
-		return "", err
-	}
-	stmt, err := t.db.Prepare("delete from transaction where transactionID = ?")
-	if err != nil {
-		tx.Rollback()
-		return "", err
-	}
-	defer stmt.Close()
-	if _, err := stmt.Exec(transactionID); err != nil {
-		tx.Rollback()
-		return "", err
-	}
-	return "", tx.Commit()
-}
-
-func (t TransactionRepoImpll) GetAllTransaction() ([]*models.TransactionModels, error) {
-	dataTransaction := []*models.TransactionModels{}
-	query := "select t.transactionID, t.transactionDate, m.menuDesc, p.price,t.Qty, c.categoryDesc, cp.price as 'Favor Price', s.servicesDesc, sp.Price as 'Services Price', (p.price*t.Qty)+cp.price+sp.Price as'Sub Total'  from transaction t  inner join menu m on t.menuID = m.menuID inner join price p on p.priceID = m.menuID inner join category c on c.categoryID = t.categoryID inner join categoriesprice cp on cp.priceID = c.categoryID inner join services s on s.servicesID = t.servicesID inner join servicesprice sp on sp.PriceID = s.servicesID group by t.transactionID;"
-	data, err := t.db.Query(query)
+func (s TransactionRepoImpll) GetAllTransactions() ([]*models.TransactionModels, error) {
+	dataTransactions := []*models.TransactionModels{}
+	query := GetAllTransactionsQuery
+	data, err := s.db.Query(query)
+	log.Println("R : ", data)
 	if err != nil {
 		log.Fatal(err)
 		return nil, err
 	}
 	for data.Next() {
-		transaction := models.TransactionModels{}
-		err := data.Scan(&transaction.TransactionID, &transaction.TransactionDate,
-			&transaction.MenuDesc, &transaction.MenuPrice, &transaction.Quantity,
-			&transaction.CategoryDesc, &transaction.FavorPrice, &transaction.ServiceDesc, &transaction.ServicePrice, &transaction.SubTotal)
+		transactions := models.TransactionModels{}
+		err := data.Scan(&transactions.TransactionID, &transactions.TransactionDate, &transactions.MenuDesc,
+			&transactions.MenuPrice, &transactions.CategoryDesc, &transactions.CategoryPrice, &transactions.Qty,
+			&transactions.ServicesDesc, &transactions.ServicePrice, &transactions.SubTotal)
 		if err != nil {
 			log.Fatal(err)
 			return nil, err
-		}
-		dataTransaction = append(dataTransaction, &transaction)
-	}
-	return dataTransaction, nil
 
+		}
+		dataTransactions = append(dataTransactions, &transactions)
+		log.Println("R : ", dataTransactions)
+	}
+	return dataTransactions, nil
 }
 
-func (t TransactionRepoImpll) GetDailyTransaction(date string) ([]*models.TransactionModels, error) {
-	dataTransaction := []*models.TransactionModels{}
-	query, err := t.db.Query(`select t.transactionID, t.transactionDate, m.menuDesc, p.price,t.Qty, c.categoryDesc, cp.price as 'Favor Price', s.servicesDesc, sp.Price as 'Services Price', (p.price*t.Qty)+cp.price+sp.Price as'Sub Total'  from transaction t  inner join menu m on t.menuID = m.menuID inner join price p on p.priceID = m.menuID inner join category c on c.categoryID = t.categoryID inner join categoriesprice cp on cp.priceID = c.categoryID inner join services s on s.servicesID = t.servicesID inner join servicesprice sp on sp.PriceID = s.servicesID where t.transactionDate like ? group by t.transactionID`, date)
+func (s TransactionRepoImpll) AddNewTransactions(day string, transactions *models.TransactionModels) (string, error) {
 
+	menuPrice := GetLatestMenuPriceByIDQuery
+	categoryPrice := GetLatestCategoryPriceByIDQuery
+	servicesPrice := GetLatestServicePriceByIDQuery
+
+	errMenu := s.db.QueryRow(menuPrice, transactions.MenuDesc).Scan(&transactions.MenuPrice)
+	if errMenu != nil {
+		log.Fatal("1st", errMenu)
+		return "", errMenu
+	}
+	errCategory := s.db.QueryRow(categoryPrice, transactions.CategoryDesc).Scan(&transactions.CategoryPrice)
+	if errCategory != nil {
+		log.Fatal(errCategory)
+		return "", errCategory
+	}
+	errServices := s.db.QueryRow(servicesPrice, transactions.ServicesDesc).Scan(&transactions.ServicePrice)
+	if errServices != nil {
+		log.Fatal(errServices)
+		return "", errServices
+	}
+
+	tx, err := s.db.Begin()
 	if err != nil {
 		log.Fatal(err)
-		return nil, err
+		return "", err
 	}
-	for query.Next() {
-		transaction := models.TransactionModels{}
-		err := query.Scan(&transaction.TransactionID, &transaction.TransactionDate,
-			&transaction.MenuDesc, &transaction.MenuPrice, &transaction.Quantity,
-			&transaction.CategoryDesc, &transaction.FavorPrice, &transaction.ServiceDesc, &transaction.ServicePrice, &transaction.SubTotal)
-		if err != nil {
-			log.Fatal(err)
-			return nil, err
-		}
-		dataTransaction = append(dataTransaction, &transaction)
+	addTransactions, err := s.db.Prepare(AddNewTransactions)
+	if err != nil {
+		tx.Rollback()
+		return "", err
 	}
-	return dataTransaction, nil
+	defer addTransactions.Close()
+	if _, err := addTransactions.Exec(day, transactions.ServicesDesc, transactions.ServicePrice, transactions.MenuDesc,
+		transactions.MenuPrice, transactions.CategoryDesc, transactions.CategoryPrice, transactions.Qty); err != nil {
+		tx.Rollback()
+		return "", err
+	}
+	return "", tx.Commit()
+}
 
+func (s TransactionRepoImpll) UpdateTransactions(transactions *models.TransactionModels) (string, error) {
+
+	menuPrice := GetLatestMenuPriceByIDQuery
+	categoryPrice := GetLatestCategoryPriceByIDQuery
+	servicesPrice := GetLatestServicePriceByIDQuery
+
+	errMenu := s.db.QueryRow(menuPrice, transactions.MenuDesc).Scan(&transactions.MenuPrice)
+	if errMenu != nil {
+		log.Fatal("1st", errMenu)
+		return "", errMenu
+	}
+	errCategory := s.db.QueryRow(categoryPrice, transactions.CategoryDesc).Scan(&transactions.CategoryPrice)
+	if errCategory != nil {
+		log.Fatal(errCategory)
+		return "", errCategory
+	}
+	errServices := s.db.QueryRow(servicesPrice, transactions.ServicesDesc).Scan(&transactions.ServicePrice)
+	if errServices != nil {
+		log.Fatal(errServices)
+		return "", errServices
+	}
+
+	log.Println("R :", transactions)
+	tx, err := s.db.Begin()
+	if err != nil {
+		log.Fatal(err)
+		return "", err
+	}
+	updateTransactions, err := s.db.Prepare(UpdateTransactions)
+	if err != nil {
+		tx.Rollback()
+		return "", err
+	}
+	defer updateTransactions.Close()
+	if _, err := updateTransactions.Exec(transactions.ServicesDesc, transactions.ServicePrice, transactions.MenuDesc,
+		transactions.MenuPrice, transactions.CategoryDesc, transactions.CategoryPrice, transactions.Qty, transactions.TransactionID); err != nil {
+		tx.Rollback()
+		return "", err
+	}
+	log.Println("R :", transactions)
+
+	return "", tx.Commit()
 }
 
 func InitTransactionRepoImpl(db *sql.DB) TransactionRepositories {
