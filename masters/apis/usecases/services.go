@@ -1,8 +1,10 @@
 package usecases
 
 import (
+	"errors"
 	"github.com/inact25/E-WarungApi/masters/apis/models"
 	"github.com/inact25/E-WarungApi/masters/apis/repositories"
+	"github.com/inact25/E-WarungApi/utils"
 	"log"
 )
 
@@ -11,6 +13,9 @@ type ServiceUseCaseImpl struct {
 }
 
 func (s ServiceUseCaseImpl) GetAllServicesByStatus(status string) ([]*models.ServicesModels, error) {
+	if utils.IsStatusValid(status) != true {
+		return nil, errors.New("ERROR")
+	}
 	menu, err := s.serviceRepo.GetAllServicesByStatus(status)
 	log.Println("U : ", status)
 	if err != nil {

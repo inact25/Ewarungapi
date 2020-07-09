@@ -1,8 +1,10 @@
 package usecases
 
 import (
+	"errors"
 	"github.com/inact25/E-WarungApi/masters/apis/models"
 	"github.com/inact25/E-WarungApi/masters/apis/repositories"
+	"github.com/inact25/E-WarungApi/utils"
 	"log"
 )
 
@@ -20,11 +22,14 @@ func (s MenuUseCaseImpl) GetAllMenu() ([]*models.MenuModels, error) {
 }
 
 func (s MenuUseCaseImpl) GetAllMenuByStatus(status string) ([]*models.MenuModels, error) {
+	if utils.IsStatusValid(status) != true {
+		return nil, errors.New("ERROR")
+	}
 	menu, err := s.menuRepo.GetAllMenuByStatus(status)
-	log.Println("U : ", status)
 	if err != nil {
 		return nil, err
 	}
+
 	return menu, nil
 }
 
