@@ -4,7 +4,7 @@ import (
 	"errors"
 	"github.com/inact25/E-WarungApi/masters/apis/models"
 	"github.com/inact25/E-WarungApi/masters/apis/repositories"
-	"github.com/inact25/E-WarungApi/utils"
+	"github.com/inact25/E-WarungApi/utils/validation"
 	"log"
 )
 
@@ -13,7 +13,7 @@ type ServiceUseCaseImpl struct {
 }
 
 func (s ServiceUseCaseImpl) GetAllServicesByStatus(status string) ([]*models.ServicesModels, error) {
-	if utils.IsStatusValid(status) != true {
+	if validation.IsStatusValid(status) != true {
 		return nil, errors.New("ERROR")
 	}
 	menu, err := s.serviceRepo.GetAllServicesByStatus(status)
@@ -33,12 +33,23 @@ func (s ServiceUseCaseImpl) GetAllServices() ([]*models.ServicesModels, error) {
 	return menu, nil
 }
 
-func (s ServiceUseCaseImpl) AddNewServices(day string, services *models.ServicesModels) (string, error) {
-	category, err := s.serviceRepo.AddNewServices(day, services)
+func (s ServiceUseCaseImpl) AddNewServices(services *models.ServicesModels) (string, error) {
+	err := validation.CheckEmpty(services.ServicesID, services.ServicesDesc, services.ServicesStatus, services.ServicePrice)
 	if err != nil {
 		return "", err
 	}
-	return category, nil
+	err = validation.CheckInt(services.ServicePrice)
+	if err != nil {
+		return "", err
+	}
+	if validation.IsStatusValid(services.ServicesStatus) != true {
+		return "", errors.New("Status not valid")
+	}
+	service, err := s.serviceRepo.AddNewServices(services)
+	if err != nil {
+		return "", err
+	}
+	return service, nil
 }
 
 func (s ServiceUseCaseImpl) UpdateServices(services *models.ServicesModels) (string, error) {

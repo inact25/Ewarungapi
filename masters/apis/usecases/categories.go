@@ -4,7 +4,7 @@ import (
 	"errors"
 	"github.com/inact25/E-WarungApi/masters/apis/models"
 	"github.com/inact25/E-WarungApi/masters/apis/repositories"
-	"github.com/inact25/E-WarungApi/utils"
+	"github.com/inact25/E-WarungApi/utils/validation"
 	"log"
 )
 
@@ -13,7 +13,7 @@ type CategoryUseCaseImpl struct {
 }
 
 func (s CategoryUseCaseImpl) GetAllCategoriesByStatus(status string) ([]*models.CategoriesModels, error) {
-	if utils.IsStatusValid(status) != true {
+	if validation.IsStatusValid(status) != true {
 		return nil, errors.New("ERROR")
 	}
 	menu, err := s.categoryRepo.GetAllCategoriesByStatus(status)
@@ -33,8 +33,19 @@ func (s CategoryUseCaseImpl) GetAllCategories() ([]*models.CategoriesModels, err
 	return menu, nil
 }
 
-func (s CategoryUseCaseImpl) AddNewCategories(day string, categories *models.CategoriesModels) (string, error) {
-	category, err := s.categoryRepo.AddNewCategories(day, categories)
+func (s CategoryUseCaseImpl) AddNewCategories(categories *models.CategoriesModels) (string, error) {
+	err := validation.CheckEmpty(categories.CategoriesID, categories.CategoriesDesc, categories.CategoriesStatus, categories.CategoriesPrice)
+	if err != nil {
+		return "", err
+	}
+	err = validation.CheckInt(categories.CategoriesPrice)
+	if err != nil {
+		return "", err
+	}
+	if validation.IsStatusValid(categories.CategoriesStatus) != true {
+		return "", errors.New("Status not valid")
+	}
+	category, err := s.categoryRepo.AddNewCategories(categories)
 	if err != nil {
 		return "", err
 	}

@@ -75,14 +75,22 @@ func (s CategoriesHandler) GetAllCategoriesByStatus(w http.ResponseWriter, r *ht
 func (s CategoriesHandler) AddNewCategories(w http.ResponseWriter, r *http.Request) {
 	dt := time.Now()
 	day := dt.Format("2006.01.02 15:04:05")
-	categories := &models.CategoriesModels{}
-	getJsonDataCheck := json.NewDecoder(r.Body).Decode(&categories)
-	log.Println(getJsonDataCheck)
-	log.Println(categories)
-	utils.ErrorCheck(getJsonDataCheck, "Fatal")
-	_, err := s.CategoriesUseCase.AddNewCategories(day, categories)
-	utils.ErrorCheck(err, "Fatal")
-	w.Write([]byte("Category Succesfully Added"))
+	var resp = Res{}
+	category := &models.CategoriesModels{}
+	w.Header().Set("Content-Type", "application/json")
+	category.PriceDate = day
+	err := json.NewDecoder(r.Body).Decode(&category)
+	if err != nil {
+		resp = Res{"Decode Failed", nil}
+	}
+	_, err = s.CategoriesUseCase.AddNewCategories(category)
+	if err != nil {
+		resp = Res{err.Error(), nil}
+	} else {
+		resp = Res{"Category Successfully Added", category}
+	}
+	byte, _ := json.Marshal(resp)
+	w.Write(byte)
 }
 
 func (s CategoriesHandler) UpdateCategories(w http.ResponseWriter, r *http.Request) {

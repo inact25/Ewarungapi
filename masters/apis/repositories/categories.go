@@ -57,7 +57,7 @@ func (s CategoriesRepoImpl) GetAllCategoriesByStatus(status string) ([]*models.C
 	return dataCategories, nil
 }
 
-func (s CategoriesRepoImpl) AddNewCategories(day string, categories *models.CategoriesModels) (string, error) {
+func (s CategoriesRepoImpl) AddNewCategories(categories *models.CategoriesModels) (string, error) {
 	tx, err := s.db.Begin()
 	if err != nil {
 		log.Fatal(err)
@@ -79,7 +79,7 @@ func (s CategoriesRepoImpl) AddNewCategories(day string, categories *models.Cate
 		return "", err
 	}
 	defer addPrice.Close()
-	if _, err := addPrice.Exec(categories.CategoriesID, day, categories.CategoriesPrice); err != nil {
+	if _, err := addPrice.Exec(categories.CategoriesID, categories.PriceDate, categories.CategoriesPrice); err != nil {
 		tx.Rollback()
 		return "", err
 	}

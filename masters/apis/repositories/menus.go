@@ -79,7 +79,7 @@ func (s MenuRepoImpl) GetAllMenuPrices() ([]*models.MenuPriceModels, error) {
 	return dataMenus, nil
 }
 
-func (s MenuRepoImpl) AddNewMenu(day string, menus *models.MenuModels) (string, error) {
+func (s MenuRepoImpl) AddNewMenu(menus *models.MenuModels) (string, error) {
 	tx, err := s.db.Begin()
 	if err != nil {
 		log.Fatal(err)
@@ -101,7 +101,7 @@ func (s MenuRepoImpl) AddNewMenu(day string, menus *models.MenuModels) (string, 
 		return "", err
 	}
 	defer addPrice.Close()
-	if _, err := addPrice.Exec(menus.MenuID, day, menus.MenuPrice); err != nil {
+	if _, err := addPrice.Exec(menus.MenuID, menus.PriceDate, menus.MenuPrice); err != nil {
 		tx.Rollback()
 		return "", err
 	}

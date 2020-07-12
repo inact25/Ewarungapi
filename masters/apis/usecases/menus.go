@@ -4,7 +4,7 @@ import (
 	"errors"
 	"github.com/inact25/E-WarungApi/masters/apis/models"
 	"github.com/inact25/E-WarungApi/masters/apis/repositories"
-	"github.com/inact25/E-WarungApi/utils"
+	"github.com/inact25/E-WarungApi/utils/validation"
 	"log"
 )
 
@@ -22,7 +22,7 @@ func (s MenuUseCaseImpl) GetAllMenu() ([]*models.MenuModels, error) {
 }
 
 func (s MenuUseCaseImpl) GetAllMenuByStatus(status string) ([]*models.MenuModels, error) {
-	if utils.IsStatusValid(status) != true {
+	if validation.IsStatusValid(status) != true {
 		return nil, errors.New("ERROR")
 	}
 	menu, err := s.menuRepo.GetAllMenuByStatus(status)
@@ -42,8 +42,19 @@ func (s MenuUseCaseImpl) GetAllMenuPrices() ([]*models.MenuPriceModels, error) {
 	return menu, nil
 }
 
-func (s MenuUseCaseImpl) AddNewMenu(day string, products *models.MenuModels) (string, error) {
-	category, err := s.menuRepo.AddNewMenu(day, products)
+func (s MenuUseCaseImpl) AddNewMenu(products *models.MenuModels) (string, error) {
+	err := validation.CheckEmpty(products.MenuID, products.MenuDesc, products.MenuStock, products.MenuPrice)
+	if err != nil {
+		return "", err
+	}
+	err = validation.CheckInt(products.MenuStock, products.MenuPrice)
+	if err != nil {
+		return "", err
+	}
+	if validation.IsStatusValid(products.MenuStatus) != true {
+		return "", errors.New("Status not valid")
+	}
+	category, err := s.menuRepo.AddNewMenu(products)
 	if err != nil {
 		return "", err
 	}

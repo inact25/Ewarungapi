@@ -3,6 +3,7 @@ package usecases
 import (
 	"github.com/inact25/E-WarungApi/masters/apis/models"
 	"github.com/inact25/E-WarungApi/masters/apis/repositories"
+	"github.com/inact25/E-WarungApi/utils/validation"
 	"log"
 )
 
@@ -18,9 +19,17 @@ func (s TransactionUseCaseImpl) GetAllTransactions() ([]*models.TransactionModel
 	return transaction, nil
 }
 
-func (s TransactionUseCaseImpl) AddNewTransactions(day string, transactions *models.TransactionModels) (string, error) {
-	log.Println("U :", transactions)
-	transaction, err := s.transactionRepo.AddNewTransactions(day, transactions)
+func (s TransactionUseCaseImpl) AddNewTransactions(transactions *models.TransactionModels) (string, error) {
+	log.Println("u:", transactions)
+	err := validation.CheckEmpty(transactions.ServicesDesc, transactions.MenuDesc, transactions.CategoryDesc, transactions.Qty)
+	if err != nil {
+		return "", err
+	}
+	err = validation.CheckInt(transactions.Qty)
+	if err != nil {
+		return "", err
+	}
+	transaction, err := s.transactionRepo.AddNewTransactions(transactions)
 	if err != nil {
 		return "", err
 	}

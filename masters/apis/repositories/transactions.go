@@ -35,8 +35,7 @@ func (s TransactionRepoImpll) GetAllTransactions() ([]*models.TransactionModels,
 	return dataTransactions, nil
 }
 
-func (s TransactionRepoImpll) AddNewTransactions(day string, transactions *models.TransactionModels) (string, error) {
-
+func (s TransactionRepoImpll) AddNewTransactions(transactions *models.TransactionModels) (string, error) {
 	menuPrice := GetLatestMenuPriceByIDQuery
 	categoryPrice := GetLatestCategoryPriceByIDQuery
 	servicesPrice := GetLatestServicePriceByIDQuery
@@ -68,7 +67,7 @@ func (s TransactionRepoImpll) AddNewTransactions(day string, transactions *model
 		return "", err
 	}
 	defer addTransactions.Close()
-	if _, err := addTransactions.Exec(day, transactions.ServicesDesc, transactions.ServicePrice, transactions.MenuDesc,
+	if _, err := addTransactions.Exec(transactions.TransactionDate, transactions.ServicesDesc, transactions.ServicePrice, transactions.MenuDesc,
 		transactions.MenuPrice, transactions.CategoryDesc, transactions.CategoryPrice, transactions.Qty); err != nil {
 		tx.Rollback()
 		return "", err

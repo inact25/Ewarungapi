@@ -93,15 +93,23 @@ func (s MenusHandler) GetAllMenuPrices(w http.ResponseWriter, r *http.Request) {
 func (s MenusHandler) AddNewMenu(w http.ResponseWriter, r *http.Request) {
 	dt := time.Now()
 	day := dt.Format("2006.01.02 15:04:05")
+	var resp = Res{}
 	menus := &models.MenuModels{}
-	getJsonDataCheck := json.NewDecoder(r.Body).Decode(&menus)
-	log.Println(getJsonDataCheck)
-	log.Println(menus)
-	utils.ErrorCheck(getJsonDataCheck, "Fatal")
-	_, err := s.MenuUseCase.AddNewMenu(day, menus)
-	utils.ErrorCheck(err, "Fatal")
-	w.Write([]byte("Category Succesfully Added"))
+	w.Header().Set("Content-Type", "application/json")
+	menus.PriceDate = day
+	err := json.NewDecoder(r.Body).Decode(&menus)
+	if err != nil {
+		resp = Res{"Decode Failed", nil}
+	}
 
+	_, err = s.MenuUseCase.AddNewMenu(menus)
+	if err != nil {
+		resp = Res{err.Error(), nil}
+	} else {
+		resp = Res{"Menu Successfully Added", menus}
+	}
+	byte, _ := json.Marshal(resp)
+	w.Write(byte)
 }
 
 func (s MenusHandler) UpdateMenu(w http.ResponseWriter, r *http.Request) {

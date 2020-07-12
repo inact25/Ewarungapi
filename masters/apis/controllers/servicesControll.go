@@ -75,14 +75,23 @@ func (s ServicesHandler) GetAllServicesByStatus(w http.ResponseWriter, r *http.R
 func (s ServicesHandler) AddNewServices(w http.ResponseWriter, r *http.Request) {
 	dt := time.Now()
 	day := dt.Format("2006.01.02 15:04:05")
-	services := &models.ServicesModels{}
-	getJsonDataCheck := json.NewDecoder(r.Body).Decode(&services)
-	log.Println(getJsonDataCheck)
-	log.Println(services)
-	utils.ErrorCheck(getJsonDataCheck, "Fatal")
-	_, err := s.ServicesUseCase.AddNewServices(day, services)
-	utils.ErrorCheck(err, "Fatal")
-	w.Write([]byte("Category Succesfully Added"))
+	var resp = Res{}
+	service := &models.ServicesModels{}
+	w.Header().Set("Content-Type", "application/json")
+	service.PriceDate = day
+	err := json.NewDecoder(r.Body).Decode(&service)
+	if err != nil {
+		resp = Res{"Decode Failed", nil}
+	}
+
+	_, err = s.ServicesUseCase.AddNewServices(service)
+	if err != nil {
+		resp = Res{err.Error(), nil}
+	} else {
+		resp = Res{"Service Successfully Added", service}
+	}
+	byte, _ := json.Marshal(resp)
+	w.Write(byte)
 }
 
 func (s ServicesHandler) UpdateServices(w http.ResponseWriter, r *http.Request) {

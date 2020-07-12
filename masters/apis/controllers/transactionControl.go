@@ -46,14 +46,22 @@ func (s TransactionHandler) GetAllTransaction(w http.ResponseWriter, r *http.Req
 func (s TransactionHandler) AddNewTransaction(w http.ResponseWriter, r *http.Request) {
 	dt := time.Now()
 	day := dt.Format("2006.01.02 15:04:05")
+	var resp = Res{}
 	transactions := &models.TransactionModels{}
-	getJsonDataCheck := json.NewDecoder(r.Body).Decode(&transactions)
-	utils.ErrorCheck(getJsonDataCheck, "Fatal")
-	_, err := s.TransactionUseCases.AddNewTransactions(day, transactions)
-	log.Println("C :", transactions)
+	w.Header().Set("Content-Type", "application/json")
+	transactions.TransactionDate = day
+	err := json.NewDecoder(r.Body).Decode(&transactions)
 	if err != nil {
-		w.Write([]byte("Data Not Found"))
+		resp = Res{"Decode Failed", nil}
 	}
+	_, err = s.TransactionUseCases.AddNewTransactions(transactions)
+	if err != nil {
+		resp = Res{err.Error(), nil}
+	} else {
+		resp = Res{"Category Successfully Added", nil}
+	}
+	byte, _ := json.Marshal(resp)
+	w.Write(byte)
 }
 
 func (s TransactionHandler) UpdateTransaction(w http.ResponseWriter, r *http.Request) {

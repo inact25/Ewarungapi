@@ -57,7 +57,7 @@ func (s ServicesRepoImpl) GetAllServicesByStatus(status string) ([]*models.Servi
 	return dataServices, nil
 }
 
-func (s ServicesRepoImpl) AddNewServices(day string, services *models.ServicesModels) (string, error) {
+func (s ServicesRepoImpl) AddNewServices(services *models.ServicesModels) (string, error) {
 	tx, err := s.db.Begin()
 	if err != nil {
 		log.Fatal(err)
@@ -79,7 +79,7 @@ func (s ServicesRepoImpl) AddNewServices(day string, services *models.ServicesMo
 		return "", err
 	}
 	defer addPrice.Close()
-	if _, err := addPrice.Exec(services.ServicesID, day, services.PriceDate); err != nil {
+	if _, err := addPrice.Exec(services.ServicesID, services.PriceDate, services.ServicePrice); err != nil {
 		tx.Rollback()
 		return "", err
 	}
