@@ -1,7 +1,7 @@
 package configs
 
 import (
-	"github.com/inact25/E-WarungApi/utils"
+	"github.com/inact25/E-WarungApi/utils/environtment"
 )
 
 type dbConf struct {
@@ -19,11 +19,11 @@ type Conf struct {
 
 func NewAppConfig() *Conf {
 	return &Conf{dbConf{
-		DbUser:               utils.GetCustomConf("DbUser", "root"),
-		DbPass:               utils.GetCustomConf("DbPass", "yourPass"),
-		DbHost:               utils.GetCustomConf("DbHost", "localhost"),
-		DbPort:               utils.GetCustomConf("DbPort", "8080"),
-		DbSchema:             utils.GetCustomConf("DbSchema", "yourSchema"),
+		DbUser:               environtment.Get("DbUser", "root"),
+		DbPass:               environtment.Get("DbPass", "yourPass"),
+		DbHost:               environtment.Get("DbHost", "localhost"),
+		DbPort:               environtment.Get("DbPort", "8080"),
+		DbSchema:             environtment.Get("DbSchema", "yourSchema"),
 		AllowNativePasswords: true,
 	}}
 }

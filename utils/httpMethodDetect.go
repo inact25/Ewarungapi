@@ -11,9 +11,9 @@ func MethodDetect(r *http.Request) string {
 	case "DELETE":
 		return "Method DELETE"
 	case "PUT":
-		return "PUT"
+		return "Method PUT"
 	default:
-		return "Method Method not implemented"
+		return "Method not yet implemented"
 	}
 
 }

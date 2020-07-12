@@ -2,6 +2,7 @@ package middlewares
 
 import (
 	"github.com/inact25/E-WarungApi/utils"
+	"github.com/inact25/E-WarungApi/utils/device"
 	ua "github.com/mileusna/useragent"
 	"log"
 	"net/http"
@@ -16,7 +17,7 @@ func ActivityLogMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		userAgent := r.UserAgent()
 		detect := ua.Parse(userAgent)
-		userDevice := utils.DeviceDetect(detect)
+		userDevice := device.Detect(detect)
 		methodDetect := utils.MethodDetect(r)
 		//device := utils.GetDeviceType(detect)
 		//currentTime := time.Now()

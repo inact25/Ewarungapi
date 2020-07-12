@@ -1,4 +1,4 @@
-package utils
+package environtment
 
 import (
 	"log"
@@ -6,7 +6,7 @@ import (
 	"github.com/spf13/viper"
 )
 
-func GetCustomConf(key, defVal string) string {
+func Get(key, defVal string) string {
 	viper.SetConfigName("config")
 	viper.AddConfigPath("./configs")
 	if err := viper.ReadInConfig(); err != nil {
