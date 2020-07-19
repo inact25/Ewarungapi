@@ -11,10 +11,9 @@ type TransactionRepoImpll struct {
 }
 
 func (s TransactionRepoImpll) GetAllTransactions() ([]*models.TransactionModels, error) {
-	dataTransactions := []*models.TransactionModels{}
+	var dataTransactions []*models.TransactionModels
 	query := GetAllTransactionsQuery
 	data, err := s.db.Query(query)
-	log.Println("R : ", data)
 	if err != nil {
 		log.Fatal(err)
 		return nil, err
@@ -30,7 +29,6 @@ func (s TransactionRepoImpll) GetAllTransactions() ([]*models.TransactionModels,
 
 		}
 		dataTransactions = append(dataTransactions, &transactions)
-		log.Println("R : ", dataTransactions)
 	}
 	return dataTransactions, nil
 }
@@ -42,7 +40,7 @@ func (s TransactionRepoImpll) AddNewTransactions(transactions *models.Transactio
 
 	errMenu := s.db.QueryRow(menuPrice, transactions.MenuDesc).Scan(&transactions.MenuPrice)
 	if errMenu != nil {
-		log.Fatal("1st", errMenu)
+		log.Fatal(errMenu)
 		return "", errMenu
 	}
 	errCategory := s.db.QueryRow(categoryPrice, transactions.CategoryDesc).Scan(&transactions.CategoryPrice)
@@ -97,7 +95,6 @@ func (s TransactionRepoImpll) UpdateTransactions(transactions *models.Transactio
 		return "", errServices
 	}
 
-	log.Println("R :", transactions)
 	tx, err := s.db.Begin()
 	if err != nil {
 		log.Fatal(err)
@@ -114,7 +111,6 @@ func (s TransactionRepoImpll) UpdateTransactions(transactions *models.Transactio
 		tx.Rollback()
 		return "", err
 	}
-	log.Println("R :", transactions)
 
 	return "", tx.Commit()
 }

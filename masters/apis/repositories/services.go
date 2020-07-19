@@ -15,7 +15,6 @@ func (s ServicesRepoImpl) GetAllServices() ([]*models.ServicesModels, error) {
 	dataServices := []*models.ServicesModels{}
 	query := GetAllServices
 	data, err := s.db.Query(query)
-	log.Println("R : ", data)
 	if err != nil {
 		log.Fatal(err)
 		return nil, err
@@ -29,14 +28,12 @@ func (s ServicesRepoImpl) GetAllServices() ([]*models.ServicesModels, error) {
 
 		}
 		dataServices = append(dataServices, &services)
-		log.Println("R : ", dataServices)
 	}
 	return dataServices, nil
 }
 
 func (s ServicesRepoImpl) GetAllServicesByStatus(status string) ([]*models.ServicesModels, error) {
-	log.Println("R : ", status)
-	dataServices := []*models.ServicesModels{}
+	var dataServices []*models.ServicesModels
 	query := GetAllServicesByStatus
 	data, err := s.db.Query(query, status)
 	if err != nil {
@@ -52,7 +49,6 @@ func (s ServicesRepoImpl) GetAllServicesByStatus(status string) ([]*models.Servi
 
 		}
 		dataServices = append(dataServices, &services)
-		log.Println("R : ", dataServices)
 	}
 	return dataServices, nil
 }
@@ -87,7 +83,6 @@ func (s ServicesRepoImpl) AddNewServices(services *models.ServicesModels) (strin
 }
 
 func (s ServicesRepoImpl) UpdateServices(services *models.ServicesModels) (string, error) {
-	log.Println("R :", services)
 	tx, err := s.db.Begin()
 	if err != nil {
 		log.Fatal(err)
@@ -107,7 +102,6 @@ func (s ServicesRepoImpl) UpdateServices(services *models.ServicesModels) (strin
 }
 
 func (s ServicesRepoImpl) UpdateServicesPrice(day string, services *models.ServicesModels) (string, error) {
-	log.Println("R :", services)
 	tx, err := s.db.Begin()
 	if err != nil {
 		log.Fatal(err)

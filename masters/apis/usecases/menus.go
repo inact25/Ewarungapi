@@ -5,7 +5,6 @@ import (
 	"github.com/inact25/E-WarungApi/masters/apis/models"
 	"github.com/inact25/E-WarungApi/masters/apis/repositories"
 	"github.com/inact25/E-WarungApi/utils/validation"
-	"log"
 )
 
 type MenuUseCaseImpl struct {
@@ -14,7 +13,6 @@ type MenuUseCaseImpl struct {
 
 func (s MenuUseCaseImpl) GetAllMenu() ([]*models.MenuModels, error) {
 	menu, err := s.menuRepo.GetAllMenu()
-	log.Println("U : ", menu)
 	if err != nil {
 		return nil, err
 	}
@@ -35,7 +33,6 @@ func (s MenuUseCaseImpl) GetAllMenuByStatus(status string) ([]*models.MenuModels
 
 func (s MenuUseCaseImpl) GetAllMenuPrices() ([]*models.MenuPriceModels, error) {
 	menu, err := s.menuRepo.GetAllMenuPrices()
-	log.Println("U : ", menu)
 	if err != nil {
 		return nil, err
 	}
@@ -62,7 +59,6 @@ func (s MenuUseCaseImpl) AddNewMenu(products *models.MenuModels) (string, error)
 }
 
 func (s MenuUseCaseImpl) UpdateMenu(menu *models.MenuModels) (string, error) {
-	log.Println("U :", menu)
 	product, err := s.menuRepo.UpdateMenu(menu)
 	if err != nil {
 		return "", err
@@ -71,7 +67,6 @@ func (s MenuUseCaseImpl) UpdateMenu(menu *models.MenuModels) (string, error) {
 }
 
 func (s MenuUseCaseImpl) UpdateMenuPrice(day string, menu *models.MenuPriceModels) (string, error) {
-	log.Println("U :", menu)
 	product, err := s.menuRepo.UpdateMenuPrice(day, menu)
 	if err != nil {
 		return "", err

@@ -6,7 +6,6 @@ import (
 	"github.com/inact25/E-WarungApi/masters/apis/models"
 	"github.com/inact25/E-WarungApi/masters/apis/usecases"
 	"github.com/inact25/E-WarungApi/utils"
-	"log"
 	"net/http"
 	"time"
 )
@@ -40,36 +39,33 @@ func ServicesControll(r *mux.Router, service usecases.ServiceUseCases) {
 
 func (s ServicesHandler) GetAllServices(w http.ResponseWriter, r *http.Request) {
 
-	menu, err := s.ServicesUseCase.GetAllServices()
-	log.Println("c : ", menu)
+	service, err := s.ServicesUseCase.GetAllServices()
 	if err != nil {
 		w.Write([]byte("Data Not Found"))
 	}
-	var resp = Res{Msg: "getAllMenu", Data: menu}
-	byteOfMenu, err := json.Marshal(resp)
+	var resp = Res{Msg: "getAllServices", Data: service}
+	byteOfService, err := json.Marshal(resp)
 	if err != nil {
 		w.Write([]byte("Something when Wrong"))
 	}
 	w.Header().Set("Content-Type", "application/json")
-	w.Write(byteOfMenu)
+	w.Write(byteOfService)
 }
 
 func (s ServicesHandler) GetAllServicesByStatus(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	status := vars["status"]
-	log.Println("C : ", status)
-	menu, err := s.ServicesUseCase.GetAllServicesByStatus(status)
-	log.Println("c : ", menu)
+	service, err := s.ServicesUseCase.GetAllServicesByStatus(status)
 	if err != nil {
 		w.Write([]byte("Data Not Found"))
 	}
-	var resp = Res{Msg: "getAllMenu", Data: menu}
-	byteOfMenu, err := json.Marshal(resp)
+	var resp = Res{Msg: "getAllServices", Data: service}
+	byteOfService, err := json.Marshal(resp)
 	if err != nil {
 		w.Write([]byte("Something when Wrong"))
 	}
 	w.Header().Set("Content-Type", "application/json")
-	w.Write(byteOfMenu)
+	w.Write(byteOfService)
 }
 
 func (s ServicesHandler) AddNewServices(w http.ResponseWriter, r *http.Request) {
@@ -98,11 +94,10 @@ func (s ServicesHandler) UpdateServices(w http.ResponseWriter, r *http.Request) 
 	services := &models.ServicesModels{}
 
 	getJsonDataCheck := json.NewDecoder(r.Body).Decode(&services)
-	log.Println("C :", services)
 	utils.ErrorCheck(getJsonDataCheck, "Fatal")
 	_, err := s.ServicesUseCase.UpdateServices(services)
 	utils.ErrorCheck(err, "Fatal")
-	w.Write([]byte("Menu Updated"))
+	w.Write([]byte("Service Updated"))
 
 }
 
@@ -111,11 +106,10 @@ func (s ServicesHandler) UpdateServicesPrice(w http.ResponseWriter, r *http.Requ
 	day := dt.Format("2006.01.02 15:04:05")
 	services := &models.ServicesModels{}
 	getJsonDataCheck := json.NewDecoder(r.Body).Decode(&services)
-	log.Println("C :", services)
 	utils.ErrorCheck(getJsonDataCheck, "Fatal")
 	_, err := s.ServicesUseCase.UpdateServicesPrice(day, services)
 	utils.ErrorCheck(err, "Fatal")
-	w.Write([]byte("Menu Updated"))
+	w.Write([]byte("Service Updated"))
 
 }
 

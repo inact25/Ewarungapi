@@ -4,7 +4,6 @@ import (
 	"github.com/inact25/E-WarungApi/masters/apis/models"
 	"github.com/inact25/E-WarungApi/masters/apis/repositories"
 	"github.com/inact25/E-WarungApi/utils/validation"
-	"log"
 )
 
 type TransactionUseCaseImpl struct {
@@ -20,7 +19,6 @@ func (s TransactionUseCaseImpl) GetAllTransactions() ([]*models.TransactionModel
 }
 
 func (s TransactionUseCaseImpl) AddNewTransactions(transactions *models.TransactionModels) (string, error) {
-	log.Println("u:", transactions)
 	err := validation.CheckEmpty(transactions.ServicesDesc, transactions.MenuDesc, transactions.CategoryDesc, transactions.Qty)
 	if err != nil {
 		return "", err
@@ -37,7 +35,6 @@ func (s TransactionUseCaseImpl) AddNewTransactions(transactions *models.Transact
 }
 
 func (s TransactionUseCaseImpl) UpdateTransactions(transactions *models.TransactionModels) (string, error) {
-	log.Println("U :", transactions)
 	transaction, err := s.transactionRepo.UpdateTransactions(transactions)
 	if err != nil {
 		return "", err

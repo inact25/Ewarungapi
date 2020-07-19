@@ -5,7 +5,6 @@ import (
 	"github.com/inact25/E-WarungApi/masters/apis/models"
 	"github.com/inact25/E-WarungApi/masters/apis/repositories"
 	"github.com/inact25/E-WarungApi/utils/validation"
-	"log"
 )
 
 type CategoryUseCaseImpl struct {
@@ -17,7 +16,6 @@ func (s CategoryUseCaseImpl) GetAllCategoriesByStatus(status string) ([]*models.
 		return nil, errors.New("ERROR")
 	}
 	menu, err := s.categoryRepo.GetAllCategoriesByStatus(status)
-	log.Println("U : ", status)
 	if err != nil {
 		return nil, err
 	}
@@ -26,7 +24,6 @@ func (s CategoryUseCaseImpl) GetAllCategoriesByStatus(status string) ([]*models.
 
 func (s CategoryUseCaseImpl) GetAllCategories() ([]*models.CategoriesModels, error) {
 	menu, err := s.categoryRepo.GetAllCategories()
-	log.Println("U : ", menu)
 	if err != nil {
 		return nil, err
 	}
@@ -53,7 +50,6 @@ func (s CategoryUseCaseImpl) AddNewCategories(categories *models.CategoriesModel
 }
 
 func (s CategoryUseCaseImpl) UpdateCategories(categories *models.CategoriesModels) (string, error) {
-	log.Println("U :", categories)
 	service, err := s.categoryRepo.UpdateCategories(categories)
 	if err != nil {
 		return "", err
@@ -62,7 +58,6 @@ func (s CategoryUseCaseImpl) UpdateCategories(categories *models.CategoriesModel
 }
 
 func (s CategoryUseCaseImpl) UpdateCategoriesPrice(day string, categories *models.CategoriesModels) (string, error) {
-	log.Println("U :", categories)
 	product, err := s.categoryRepo.UpdateCategoriesPrice(day, categories)
 	if err != nil {
 		return "", err

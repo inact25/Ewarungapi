@@ -5,7 +5,6 @@ import (
 	"github.com/inact25/E-WarungApi/masters/apis/models"
 	"github.com/inact25/E-WarungApi/masters/apis/repositories"
 	"github.com/inact25/E-WarungApi/utils/validation"
-	"log"
 )
 
 type ServiceUseCaseImpl struct {
@@ -17,7 +16,6 @@ func (s ServiceUseCaseImpl) GetAllServicesByStatus(status string) ([]*models.Ser
 		return nil, errors.New("ERROR")
 	}
 	menu, err := s.serviceRepo.GetAllServicesByStatus(status)
-	log.Println("U : ", status)
 	if err != nil {
 		return nil, err
 	}
@@ -26,7 +24,6 @@ func (s ServiceUseCaseImpl) GetAllServicesByStatus(status string) ([]*models.Ser
 
 func (s ServiceUseCaseImpl) GetAllServices() ([]*models.ServicesModels, error) {
 	menu, err := s.serviceRepo.GetAllServices()
-	log.Println("U : ", menu)
 	if err != nil {
 		return nil, err
 	}
@@ -53,7 +50,6 @@ func (s ServiceUseCaseImpl) AddNewServices(services *models.ServicesModels) (str
 }
 
 func (s ServiceUseCaseImpl) UpdateServices(services *models.ServicesModels) (string, error) {
-	log.Println("U :", services)
 	service, err := s.serviceRepo.UpdateServices(services)
 	if err != nil {
 		return "", err
@@ -62,7 +58,6 @@ func (s ServiceUseCaseImpl) UpdateServices(services *models.ServicesModels) (str
 }
 
 func (s ServiceUseCaseImpl) UpdateServicesPrice(day string, services *models.ServicesModels) (string, error) {
-	log.Println("U :", services)
 	product, err := s.serviceRepo.UpdateServicesPrice(day, services)
 	if err != nil {
 		return "", err

@@ -14,7 +14,6 @@ func (s MenuRepoImpl) GetAllMenu() ([]*models.MenuModels, error) {
 	dataMenus := []*models.MenuModels{}
 	query := GetAllMenusQuery
 	data, err := s.db.Query(query)
-	log.Println("R : ", data)
 	if err != nil {
 		log.Fatal(err)
 		return nil, err
@@ -28,13 +27,11 @@ func (s MenuRepoImpl) GetAllMenu() ([]*models.MenuModels, error) {
 
 		}
 		dataMenus = append(dataMenus, &menu)
-		log.Println("R : ", dataMenus)
 	}
 	return dataMenus, nil
 }
 
 func (s MenuRepoImpl) GetAllMenuByStatus(status string) ([]*models.MenuModels, error) {
-	log.Println("R : ", status)
 	dataMenus := []*models.MenuModels{}
 	query := GetAllMenusByStatusQuery
 	data, err := s.db.Query(query, status)
@@ -51,7 +48,6 @@ func (s MenuRepoImpl) GetAllMenuByStatus(status string) ([]*models.MenuModels, e
 
 		}
 		dataMenus = append(dataMenus, &menu)
-		log.Println("R : ", dataMenus)
 	}
 	return dataMenus, nil
 }
@@ -60,7 +56,6 @@ func (s MenuRepoImpl) GetAllMenuPrices() ([]*models.MenuPriceModels, error) {
 	dataMenus := []*models.MenuPriceModels{}
 	query := GetAllMenusPrice
 	data, err := s.db.Query(query)
-	log.Println("R : ", data)
 	if err != nil {
 		log.Fatal(err)
 		return nil, err
@@ -74,7 +69,6 @@ func (s MenuRepoImpl) GetAllMenuPrices() ([]*models.MenuPriceModels, error) {
 
 		}
 		dataMenus = append(dataMenus, &menu)
-		log.Println("R : ", dataMenus)
 	}
 	return dataMenus, nil
 }
@@ -109,8 +103,6 @@ func (s MenuRepoImpl) AddNewMenu(menus *models.MenuModels) (string, error) {
 }
 
 func (s MenuRepoImpl) UpdateMenu(menu *models.MenuModels) (string, error) {
-
-	log.Println("R :", menu)
 	tx, err := s.db.Begin()
 	if err != nil {
 		log.Fatal(err)
@@ -130,8 +122,6 @@ func (s MenuRepoImpl) UpdateMenu(menu *models.MenuModels) (string, error) {
 }
 
 func (s MenuRepoImpl) UpdateMenuPrice(day string, menu *models.MenuPriceModels) (string, error) {
-
-	log.Println("R :", menu)
 	tx, err := s.db.Begin()
 	if err != nil {
 		log.Fatal(err)

@@ -6,7 +6,6 @@ import (
 	"github.com/inact25/E-WarungApi/masters/apis/models"
 	"github.com/inact25/E-WarungApi/masters/apis/usecases"
 	"github.com/inact25/E-WarungApi/utils"
-	"log"
 	"net/http"
 	"time"
 )
@@ -40,36 +39,33 @@ func CategoriesControll(r *mux.Router, service usecases.CategoryUseCases) {
 
 func (s CategoriesHandler) GetAllCategories(w http.ResponseWriter, r *http.Request) {
 
-	menu, err := s.CategoriesUseCase.GetAllCategories()
-	log.Println("c : ", menu)
+	category, err := s.CategoriesUseCase.GetAllCategories()
 	if err != nil {
 		w.Write([]byte("Data Not Found"))
 	}
-	var resp = Res{Msg: "getAllMenu", Data: menu}
-	byteOfMenu, err := json.Marshal(resp)
+	var resp = Res{Msg: "getAllCategory", Data: category}
+	byteOfCategory, err := json.Marshal(resp)
 	if err != nil {
 		w.Write([]byte("Something when Wrong"))
 	}
 	w.Header().Set("Content-Type", "application/json")
-	w.Write(byteOfMenu)
+	w.Write(byteOfCategory)
 }
 
 func (s CategoriesHandler) GetAllCategoriesByStatus(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	status := vars["status"]
-	log.Println("C : ", status)
-	menu, err := s.CategoriesUseCase.GetAllCategoriesByStatus(status)
-	log.Println("c : ", menu)
+	category, err := s.CategoriesUseCase.GetAllCategoriesByStatus(status)
 	if err != nil {
 		w.Write([]byte("Data Not Found"))
 	}
-	var resp = Res{Msg: "getAllMenu", Data: menu}
-	byteOfMenu, err := json.Marshal(resp)
+	var resp = Res{Msg: "getAllCategory", Data: category}
+	byteOfCategory, err := json.Marshal(resp)
 	if err != nil {
 		w.Write([]byte("Something when Wrong"))
 	}
 	w.Header().Set("Content-Type", "application/json")
-	w.Write(byteOfMenu)
+	w.Write(byteOfCategory)
 }
 
 func (s CategoriesHandler) AddNewCategories(w http.ResponseWriter, r *http.Request) {
@@ -97,11 +93,10 @@ func (s CategoriesHandler) UpdateCategories(w http.ResponseWriter, r *http.Reque
 	categories := &models.CategoriesModels{}
 
 	getJsonDataCheck := json.NewDecoder(r.Body).Decode(&categories)
-	log.Println("C :", categories)
 	utils.ErrorCheck(getJsonDataCheck, "Fatal")
 	_, err := s.CategoriesUseCase.UpdateCategories(categories)
 	utils.ErrorCheck(err, "Fatal")
-	w.Write([]byte("Menu Updated"))
+	w.Write([]byte("Category Updated"))
 
 }
 
@@ -110,11 +105,10 @@ func (s CategoriesHandler) UpdateCategoriesPrice(w http.ResponseWriter, r *http.
 	day := dt.Format("2006.01.02 15:04:05")
 	categories := &models.CategoriesModels{}
 	getJsonDataCheck := json.NewDecoder(r.Body).Decode(&categories)
-	log.Println("C :", categories)
 	utils.ErrorCheck(getJsonDataCheck, "Fatal")
 	_, err := s.CategoriesUseCase.UpdateCategoriesPrice(day, categories)
 	utils.ErrorCheck(err, "Fatal")
-	w.Write([]byte("Menu Updated"))
+	w.Write([]byte("Category Updated"))
 
 }
 

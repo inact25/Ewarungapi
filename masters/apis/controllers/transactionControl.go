@@ -6,7 +6,6 @@ import (
 	"github.com/inact25/E-WarungApi/masters/apis/models"
 	"github.com/inact25/E-WarungApi/masters/apis/usecases"
 	"github.com/inact25/E-WarungApi/utils"
-	"log"
 	"net/http"
 	"time"
 )
@@ -37,7 +36,7 @@ func (s TransactionHandler) GetAllTransaction(w http.ResponseWriter, r *http.Req
 	var resp = Res{Msg: "getAllTransaction", Data: transaction}
 	byteOfTransaction, err := json.Marshal(resp)
 	if err != nil {
-		w.Write([]byte("Something when Wrong"))
+		w.Write([]byte("Something when Wrong : "))
 	}
 	w.Header().Set("Content-Type", "application/json")
 	w.Write(byteOfTransaction)
@@ -67,11 +66,9 @@ func (s TransactionHandler) AddNewTransaction(w http.ResponseWriter, r *http.Req
 func (s TransactionHandler) UpdateTransaction(w http.ResponseWriter, r *http.Request) {
 	transactions := &models.TransactionModels{}
 	getJsonDataCheck := json.NewDecoder(r.Body).Decode(&transactions)
-	log.Println("C :", transactions)
 	utils.ErrorCheck(getJsonDataCheck, "Fatal")
 	_, err := s.TransactionUseCases.UpdateTransactions(transactions)
 	if err != nil {
-		log.Println("err : ", err)
 		w.Write([]byte("Data Not Found"))
 	}
 }

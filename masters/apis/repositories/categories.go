@@ -15,7 +15,6 @@ func (s CategoriesRepoImpl) GetAllCategories() ([]*models.CategoriesModels, erro
 	dataCategories := []*models.CategoriesModels{}
 	query := GetAllCategories
 	data, err := s.db.Query(query)
-	log.Println("R : ", data)
 	if err != nil {
 		log.Fatal(err)
 		return nil, err
@@ -29,13 +28,11 @@ func (s CategoriesRepoImpl) GetAllCategories() ([]*models.CategoriesModels, erro
 
 		}
 		dataCategories = append(dataCategories, &categories)
-		log.Println("R : ", dataCategories)
 	}
 	return dataCategories, nil
 }
 
 func (s CategoriesRepoImpl) GetAllCategoriesByStatus(status string) ([]*models.CategoriesModels, error) {
-	log.Println("R : ", status)
 	dataCategories := []*models.CategoriesModels{}
 	query := GetAllCategoriesByStatus
 	data, err := s.db.Query(query, status)
@@ -52,7 +49,6 @@ func (s CategoriesRepoImpl) GetAllCategoriesByStatus(status string) ([]*models.C
 
 		}
 		dataCategories = append(dataCategories, &categories)
-		log.Println("R : ", dataCategories)
 	}
 	return dataCategories, nil
 }
@@ -87,7 +83,6 @@ func (s CategoriesRepoImpl) AddNewCategories(categories *models.CategoriesModels
 }
 
 func (s CategoriesRepoImpl) UpdateCategories(categories *models.CategoriesModels) (string, error) {
-	log.Println("R :", categories)
 	tx, err := s.db.Begin()
 	if err != nil {
 		log.Fatal(err)
@@ -107,9 +102,6 @@ func (s CategoriesRepoImpl) UpdateCategories(categories *models.CategoriesModels
 }
 
 func (s CategoriesRepoImpl) UpdateCategoriesPrice(day string, categories *models.CategoriesModels) (string, error) {
-	log.Println("price : ", categories.CategoriesPrice)
-	log.Println("id :", categories.CategoriesID)
-	log.Println("R :", day)
 	tx, err := s.db.Begin()
 	if err != nil {
 		log.Fatal(err)
