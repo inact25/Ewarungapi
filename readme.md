@@ -31,7 +31,7 @@
 ![database design](https://1.bp.blogspot.com/-yOYChEY4Irk/XwYF-JEC0_I/AAAAAAAAIr0/1jhx8lNRKQ4o1tj5UFbmA3KRRTMy4oN6ACK4BGAsYHg/s867/Annotation%2B2020-07-09%2B004401.png)
  
 # feature on upcoming state
-- api validation - On Progress
+- api validation - Checking On Progress
 - jwt authentication
 - multi add transactionS
 
