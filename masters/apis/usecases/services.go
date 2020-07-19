@@ -50,6 +50,13 @@ func (s ServiceUseCaseImpl) AddNewServices(services *models.ServicesModels) (str
 }
 
 func (s ServiceUseCaseImpl) UpdateServices(services *models.ServicesModels) (string, error) {
+	err := validation.CheckEmpty(services.ServicesID, services.ServicesDesc, services.ServicesStatus)
+	if err != nil {
+		return "", err
+	}
+	if validation.IsStatusValid(services.ServicesStatus) != true {
+		return "", errors.New("Status not valid")
+	}
 	service, err := s.serviceRepo.UpdateServices(services)
 	if err != nil {
 		return "", err
@@ -58,6 +65,14 @@ func (s ServiceUseCaseImpl) UpdateServices(services *models.ServicesModels) (str
 }
 
 func (s ServiceUseCaseImpl) UpdateServicesPrice(day string, services *models.ServicesModels) (string, error) {
+	err := validation.CheckEmpty(services.ServicesID, services.ServicePrice)
+	if err != nil {
+		return "", err
+	}
+	err = validation.CheckInt(services.ServicePrice)
+	if err != nil {
+		return "", err
+	}
 	product, err := s.serviceRepo.UpdateServicesPrice(day, services)
 	if err != nil {
 		return "", err
@@ -66,6 +81,10 @@ func (s ServiceUseCaseImpl) UpdateServicesPrice(day string, services *models.Ser
 }
 
 func (s ServiceUseCaseImpl) DeleteServices(servicesID string) (string, error) {
+	err := validation.CheckEmpty(servicesID)
+	if err != nil {
+		return "", err
+	}
 	product, err := s.serviceRepo.DeleteServices(servicesID)
 	if err != nil {
 		return "", err

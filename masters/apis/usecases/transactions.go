@@ -35,6 +35,14 @@ func (s TransactionUseCaseImpl) AddNewTransactions(transactions *models.Transact
 }
 
 func (s TransactionUseCaseImpl) UpdateTransactions(transactions *models.TransactionModels) (string, error) {
+	err := validation.CheckEmpty(transactions.TransactionID, transactions.ServicesDesc, transactions.MenuDesc, transactions.CategoryDesc, transactions.Qty)
+	if err != nil {
+		return "", err
+	}
+	err = validation.CheckInt(transactions.Qty)
+	if err != nil {
+		return "", err
+	}
 	transaction, err := s.transactionRepo.UpdateTransactions(transactions)
 	if err != nil {
 		return "", err

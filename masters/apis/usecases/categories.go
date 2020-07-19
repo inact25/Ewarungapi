@@ -50,6 +50,13 @@ func (s CategoryUseCaseImpl) AddNewCategories(categories *models.CategoriesModel
 }
 
 func (s CategoryUseCaseImpl) UpdateCategories(categories *models.CategoriesModels) (string, error) {
+	err := validation.CheckEmpty(categories.CategoriesID, categories.CategoriesDesc, categories.CategoriesStatus)
+	if err != nil {
+		return "", err
+	}
+	if validation.IsStatusValid(categories.CategoriesStatus) != true {
+		return "", errors.New("Status not valid")
+	}
 	service, err := s.categoryRepo.UpdateCategories(categories)
 	if err != nil {
 		return "", err
@@ -58,6 +65,14 @@ func (s CategoryUseCaseImpl) UpdateCategories(categories *models.CategoriesModel
 }
 
 func (s CategoryUseCaseImpl) UpdateCategoriesPrice(day string, categories *models.CategoriesModels) (string, error) {
+	err := validation.CheckEmpty(categories.CategoriesID, categories.CategoriesPrice)
+	if err != nil {
+		return "", err
+	}
+	err = validation.CheckInt(categories.CategoriesPrice)
+	if err != nil {
+		return "", err
+	}
 	product, err := s.categoryRepo.UpdateCategoriesPrice(day, categories)
 	if err != nil {
 		return "", err
@@ -66,6 +81,10 @@ func (s CategoryUseCaseImpl) UpdateCategoriesPrice(day string, categories *model
 }
 
 func (s CategoryUseCaseImpl) DeleteCategories(categoriesID string) (string, error) {
+	err := validation.CheckEmpty(categoriesID)
+	if err != nil {
+		return "", err
+	}
 	product, err := s.categoryRepo.DeleteCategories(categoriesID)
 	if err != nil {
 		return "", err

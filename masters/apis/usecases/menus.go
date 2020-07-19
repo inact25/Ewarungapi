@@ -40,7 +40,7 @@ func (s MenuUseCaseImpl) GetAllMenuPrices() ([]*models.MenuPriceModels, error) {
 }
 
 func (s MenuUseCaseImpl) AddNewMenu(products *models.MenuModels) (string, error) {
-	err := validation.CheckEmpty(products.MenuID, products.MenuDesc, products.MenuStock, products.MenuPrice)
+	err := validation.CheckEmpty(products.MenuID, products.MenuDesc, products.MenuStock, products.MenuStatus, products.MenuPrice)
 	if err != nil {
 		return "", err
 	}
@@ -59,6 +59,13 @@ func (s MenuUseCaseImpl) AddNewMenu(products *models.MenuModels) (string, error)
 }
 
 func (s MenuUseCaseImpl) UpdateMenu(menu *models.MenuModels) (string, error) {
+	err := validation.CheckEmpty(menu.MenuID, menu.MenuDesc, menu.MenuStock, menu.MenuStatus)
+	if err != nil {
+		return "", err
+	}
+	if validation.IsStatusValid(menu.MenuStatus) != true {
+		return "", errors.New("Status not valid")
+	}
 	product, err := s.menuRepo.UpdateMenu(menu)
 	if err != nil {
 		return "", err
@@ -67,6 +74,14 @@ func (s MenuUseCaseImpl) UpdateMenu(menu *models.MenuModels) (string, error) {
 }
 
 func (s MenuUseCaseImpl) UpdateMenuPrice(day string, menu *models.MenuPriceModels) (string, error) {
+	err := validation.CheckEmpty(menu.MenuID, menu.MenuPrice)
+	if err != nil {
+		return "", err
+	}
+	err = validation.CheckInt(menu.MenuPrice)
+	if err != nil {
+		return "", err
+	}
 	product, err := s.menuRepo.UpdateMenuPrice(day, menu)
 	if err != nil {
 		return "", err
@@ -75,6 +90,10 @@ func (s MenuUseCaseImpl) UpdateMenuPrice(day string, menu *models.MenuPriceModel
 }
 
 func (s MenuUseCaseImpl) DeleteMenu(menuID string) (string, error) {
+	err := validation.CheckEmpty(menuID)
+	if err != nil {
+		return "", err
+	}
 	product, err := s.menuRepo.DeleteMenu(menuID)
 	if err != nil {
 		return "", err
