@@ -14,7 +14,7 @@ func CreateRouter() *mux.Router {
 
 func RunServer(router *mux.Router) {
 
-	routerHost := environtment.Get("RouterHost", "yourRouterHost")
+	routerHost := environtment.Get("RouterHost", "localhost")
 	routerPort := environtment.Get("RouterPort", "8080")
 
 	log.Printf("Server is now listening at %v.....\n", routerPort)

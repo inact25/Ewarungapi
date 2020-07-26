@@ -19,11 +19,11 @@ type Conf struct {
 
 func NewAppConfig() *Conf {
 	return &Conf{dbConf{
-		DbUser:               environtment.Get("DbUser", "root"),
-		DbPass:               environtment.Get("DbPass", "yourPass"),
-		DbHost:               environtment.Get("DbHost", "localhost"),
-		DbPort:               environtment.Get("DbPort", "8080"),
-		DbSchema:             environtment.Get("DbSchema", "yourSchema"),
+		DbUser:               environtment.Get("DbUser", "uckl0iyn6dk4rych"),
+		DbPass:               environtment.Get("DbPass", "ZdBnoKA3gCOVPtTGW6md"),
+		DbHost:               environtment.Get("DbHost", "bfdggwsfnu3oq2r32g2n-mysql.services.clever-cloud.com"),
+		DbPort:               environtment.Get("DbPort", "3306"),
+		DbSchema:             environtment.Get("DbSchema", "bfdggwsfnu3oq2r32g2n"),
 		AllowNativePasswords: true,
 	}}
 }

@@ -26,5 +26,9 @@ func Init(r *mux.Router, db *sql.DB) {
 	transactionUseCase := usecases.InitTransactionUseCase(transactionRepo)
 	controllers.TransactionControll(r, transactionUseCase)
 
+	usersRepo := repositories.InitUserRepoImpl(db)
+	usersUseCases := usecases.InitUsersUseCase(usersRepo)
+	controllers.UsersControll(r, usersUseCases)
+
 	r.Use(middlewares.ActivityLogMiddleware)
 }

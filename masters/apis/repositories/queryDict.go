@@ -104,3 +104,10 @@ const (
 	UpdateTransactions = `update transaction set servicesID = ?, servicePrice = ?, menuID = ?,menuPrice = ?, 
 						  categoryID = ?, categoryPrice = ?, Qty = ? where transactionID = ?;`
 )
+
+//Auth and User
+const (
+	OAuth             = `select userID,userLevel from users where userName = ? and userPassword = ?;`
+	GetAllUsersQuery  = `select userID,userName,userEmail,userLevel from users;`
+	GetSelfUsersQuery = `select userID,userName,userEmail,userPassword,userLevel from users where userID = ?;`
+)
