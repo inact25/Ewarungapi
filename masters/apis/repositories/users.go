@@ -11,7 +11,6 @@ type UserRepoImpl struct {
 }
 
 func (u UserRepoImpl) GetSelfUser(userModels *models.SelfUserModels) ([]*models.SelfUserModels, error) {
-	log.Print("r :", userModels)
 	var result []*models.SelfUserModels
 	data := models.SelfUserModels{}
 	query := GetSelfUsersQuery
@@ -21,7 +20,6 @@ func (u UserRepoImpl) GetSelfUser(userModels *models.SelfUserModels) ([]*models.
 		return nil, err
 	}
 	result = append(result, &data)
-	log.Print("r :", result)
 	return result, nil
 }
 
@@ -34,9 +32,6 @@ func (u UserRepoImpl) OAuth(userModels *models.SelfUserModels) ([]*models.OAuth,
 		return nil, err
 	}
 	dataOAuth = append(dataOAuth, &data)
-
-	log.Print("Data r: ", dataOAuth)
-
 	return dataOAuth, nil
 }
 
