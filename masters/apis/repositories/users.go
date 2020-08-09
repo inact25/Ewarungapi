@@ -10,20 +10,38 @@ type UserRepoImpl struct {
 	db *sql.DB
 }
 
-func (u UserRepoImpl) GetSelfUser(userModels *models.SelfUserModels) ([]*models.SelfUserModels, error) {
-	var result []*models.SelfUserModels
-	data := models.SelfUserModels{}
-	query := GetSelfUsersQuery
+func (u UserRepoImpl) UpdateUser(selfModels *models.UserModels) (string, error) {
+	tx, err := u.db.Begin()
+	if err != nil {
+		log.Fatal(err)
+		return "", err
+	}
+	putSelf, err := u.db.Prepare(UpdateUSerQuery)
+	if err != nil {
+		tx.Rollback()
+		return "", err
+	}
+	defer putSelf.Close()
+	if _, err := putSelf.Exec(selfModels.UserName, selfModels.UserEmail, selfModels.UserPassword, selfModels.UserID); err != nil {
+		tx.Rollback()
+		return "", err
+	}
+	return "", tx.Commit()
+}
+
+func (u UserRepoImpl) GetUser(userModels *models.UserModels) ([]*models.UserModels, error) {
+	var result []*models.UserModels
+	data := models.UserModels{}
+	query := GetUserQuery
 	row := u.db.QueryRow(query, userModels.UserID)
 	if err := row.Scan(&data.UserID, &data.UserName, &data.UserEmail, &data.UserPassword, &data.UserLevel); err != nil {
-		log.Fatal(err)
 		return nil, err
 	}
 	result = append(result, &data)
 	return result, nil
 }
 
-func (u UserRepoImpl) OAuth(userModels *models.SelfUserModels) ([]*models.OAuth, error) {
+func (u UserRepoImpl) OAuth(userModels *models.UserModels) ([]*models.OAuth, error) {
 	var dataOAuth []*models.OAuth
 	data := models.OAuth{}
 	query := OAuth
@@ -45,7 +63,7 @@ func (u UserRepoImpl) GetAllUsers() ([]*models.UserModels, error) {
 	}
 	for data.Next() {
 		user := models.UserModels{}
-		err := data.Scan(&user.UserID, &user.UserName, &user.UserEmail, &user.UserLevel)
+		err := data.Scan(&user.UserID, &user.UserName, &user.UserEmail, &user.UserPassword, &user.UserLevel)
 		if err != nil {
 			log.Fatal(err)
 			return nil, err

@@ -107,7 +107,8 @@ const (
 
 //Auth and User
 const (
-	OAuth             = `select userID,userLevel from users where userName = ? and userPassword = ?;`
-	GetAllUsersQuery  = `select userID,userName,userEmail,userLevel from users;`
-	GetSelfUsersQuery = `select userID,userName,userEmail,userPassword,userLevel from users where userID = ?;`
+	OAuth            = `select userID,userLevel from users where userName = ? and userPassword = ?;`
+	GetAllUsersQuery = `select userID,userName,userEmail,userPassword,userLevel from users;`
+	GetUserQuery     = `select userID,userName,userEmail,userPassword,userLevel from users where userID = ?;`
+	UpdateUSerQuery  = `update users set userName = ?, userEmail = ?, userPassword = ?, userLevel = ? where userID = ?`
 )
